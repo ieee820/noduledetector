@@ -4,12 +4,13 @@
 %
 
 datadir = '../noduledetectordata/';
-anotationFile = fopen([datadir 'originaldata/annotations.txt'],'r');
+annotf = [datadir 'originaldata/annotations.txt'];
 resultsFile = fopen([datadir 'results_all_tholds.txt'], 'w');
-folder = [datadir 'ilastikoutput/'];
+folder = [datadir 'ilastikoutput3/'];
 files = dir([folder '*.h5']);
-thold = linspace(0.40, 0.70, 10);
-labelthreshold = 0.4; %the threshold that labels shall be extracted
+%thold = linspace(0.40, 0.60, 5);
+thold = 0.65;
+labelthreshold = 0.65; %the threshold that labels shall be extracted
 
 resultperTh = zeros(length(thold), length(files)-1);%example_04 has no nodules
 
@@ -28,7 +29,7 @@ for x = 1:length(files)
         origMatrix = h5read(originalFileName,'/set');
         origMatrix = permute(origMatrix, [2 3 1]); 
     end
-    [result, labels_of_thres]  = calculateEv2(onlyFileName, anotationFile,...
+    result  = calculateEv2(onlyFileName, annotf,...
                            predMatrix, thold, labelthreshold);
     resultperTh = resultperTh+result;
     fprintf(resultsFile, '---- Results Of : %s ----\n', originalFileName);
@@ -40,8 +41,8 @@ end
     fprintf(resultsFile, '\n Total TP rates:');
     fprintf(resultsFile,'%f\n', resultperTh(:,2)./resultperTh(:,1));
     fprintf(resultsFile, '\n Total FP:');
-    fprintf(resultsFile,'%f\n', resultperTh(:,3)./5);
-    fclose(resultsFile);
+    fprintf(resultsFile,'%f\n', resultperTh(:,3)./length(files));
+    fclose('all');
     
     tpRate = resultperTh(:,2)./ resultperTh(:,1);
     fpNumber = resultperTh(:,3)./ length(files);

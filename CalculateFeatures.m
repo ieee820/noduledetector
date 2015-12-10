@@ -1,24 +1,22 @@
-function writeFeatures(originalFile, predictionFile, outputFileNameAndPath,labelFiles)
+function CalculateFeatures(originalFile, predictionFile, outputFileNameAndPath, labelFiles, thold)
 
 if (nargin==0)
-   originalFile = '/Users/ilker/Desktop/Thesis/Anode09-Original-Prediction/example01.h5';
-   predictionFile = '/Users/ilker/Desktop/Thesis/Anode09-Original-Prediction/NormalFeaturesSelected/example01_Probabilities.h5';
-   outputFileNameAndPath = 'example_01.h5';
-   labelFiles = '/Users/ilker/Desktop/Thesis/Anode09-Original-Prediction/LabelsForFeatures/example01labels_.txt';
-   %labelFiles = '/Users/ilker/Desktop/Thesis/Anode09-Original-Prediction/NormalFeaturesSelected/Labels/example05labels_.txt';              
+    originalFile = '../noduledetectordata/originaldata/example02.h5';
+    predictionFile = '../noduledetectordata/ilastikoutput3/example02_Probabilities.h5';
+    outputFileNameAndPath = 'example_02.h5';
+    labelFiles = '../noduledetectordata/ilastikoutput3/example02_labels.txt';
+    thold = 0.65;
 end
-net = load('imagenet-vgg-f.mat');
-run('matconvnet/matlab/vl_setupnn.m');
+
 %%ROOM FOR FEATURES
 histbins = linspace(0,255,32);
-granbins = linspace(50, 10000,5);
+
 numObjects2 = 0;
 realNumObjects = 0;
-fileCount = 1;
-feature_names = {'Volume', 'CentroidNorm','Centroid', 'Perimeter', 'PseudoRadius', 'Complexity',...
+feature_names = {'Volume','CentroidNorm','Centroid', 'Perimeter', 'PseudoRadius', 'Complexity',...
     'BoundingBox2Volume', 'BoundingBoxAspectRatio', 'IntensityMax','IntensityMean',...
-    'IntensityMin','IntensityStd', 'CloseMassRatio', 'CNN'}; %,'IntensityHist', 'Granulometry'
-feature_lengths = [1, 3, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 512]; %, length(histbins), length(granbins)
+    'IntensityMin','IntensityStd', 'CloseMassRatio','IntensityHist'};
+feature_lengths = [1, 3, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, length(histbins)];
 %512 for cnn filter features
 fea_label = cell(numObjects2,1);
 feature_num = length(feature_names);
@@ -28,18 +26,17 @@ for f = 1: feature_num
 end
 %%EOF ROOM FOR FEATURES
 
-for flx = 1:fileCount
-  
-outfname = strcat('FeatureFiles2/',outputFileNameAndPath);
-labelFile = fopen(labelFiles(flx,:));
+outfname = ['../noduledetectordata/FeatureFiles/' outputFileNameAndPath];
+labelFile = fopen(labelFiles);
 labels = textscan(labelFile,'%d','delimiter','\n');
 labels = labels{1};
 
 originalSetName = '/set';
-ThresHold = 0.4;
-predMatrix = h5read(predictionFile(flx,:),'/exported_data'); %h5 read prediction matrix
+ThresHold = thold;
+predMatrix = h5read(predictionFile,'/exported_data'); %h5 read prediction matrix
 predMatrix = permute(predMatrix, [3 4 2 1]); %permute the matrix
-predMatrixTH = predMatrix(:,:,:,1)>ThresHold; %predictiondaki
+predMatrixTH = predMatrix(:,:,:,4)>ThresHold; %predictiondaki
+[width,height,deep] = size(predMatrixTH);
 
 CC = bwconncomp(predMatrixTH);
 s  = regionprops(CC, 'centroid','BoundingBox','Area');
@@ -62,16 +59,17 @@ for o = 1 : numObjects
     
     is_current_object_a_noldule = any(labels(:)==o); %if label file contains that label
     
-    bbx = floor(CC.bbx(o,:)+0.5);   %bounding box
-    base = zeros(bbx(5), bbx(4),bbx (6));   %base of bounding box
+    if is_current_object_a_noldule==1
+        debug=0;
+    end
+
+    bbx = floor(CC.bbx(o,:)+0.5);   %bounding box 
+    [graycube, bbx] = extendCube(bbx, originalFile, originalSetName,...
+        height, width, deep);
+    base = zeros(bbx(5), bbx(4), bbx(6));   %base of bounding box
     pix = CC.PixelIdxList{o};   %the pixel location of the cc object
     [py,px,pz] = ind2sub(imSize, pix); %converts the 1d point into 3d point
-    lenx  =bbx(4); leny = bbx(5); lenz = bbx(6);
-    
-    startix = double([bbx(3), bbx(2), bbx(1)]);
-    counts = double([bbx(6),bbx(5), bbx(4)]);
-    graycube = h5read(originalFile(flx,:), originalSetName, startix, counts);
-    graycube = permute(permute(graycube, [3, 2, 1]),[2,1,3]); %this is for matlab xyz order227122
+    lenx = bbx(4); leny = bbx(5); lenz = bbx(6);
     
     newpy = py-bbx(2)+1;
     newpx = px-bbx(1)+1;
@@ -95,7 +93,7 @@ for o = 1 : numObjects
     fea_pixmin = min(mskedPixelValues);
     fea_pixstd = std(mskedPixelValues);
     fea_close_mass = calculateCloseMassGravity(vec_centroids(o,:), pseudorad,fea_vol,o,vec_areas, vec_centroids);
-    %fea_pixhist=  hist(mskedPixelValues, histbins);
+    fea_pixhist=  hist(mskedPixelValues, histbins);
     %fea_gran = calculate3DVolumeGranulometry(graycube, base, granbins);
     %%END OF FEATURE CALCULATION
     
@@ -113,14 +111,11 @@ for o = 1 : numObjects
     features{11}(realNumObjects) = fea_pixmin;
     features{12}(realNumObjects) = fea_pixstd;
     features{13}(realNumObjects,:) = fea_close_mass;
-    %CNNFEATURES
-    features{14}(realNumObjects, :) = extract_cnn_features(graycube, net);
+    
     fea_label{realNumObjects} = is_current_object_a_noldule;
-    %features{14}(o,:) = fea_pixhist;
+    features{14}(o,:) = fea_pixhist;
     %features{15}(o,:) = fea_gran;
     %%EOF WRITING FEATURES
-end
-fprintf('\n');
 end
 
 writeFeatures2HDF5(outfname, realNumObjects, features, feature_names, feature_lengths)
@@ -233,4 +228,59 @@ greyData(~msk) = 0;
 granulo = maxtree_granulo3d(greyData, 0, 2, granulobins);
 % this is not the best way of doing it but I will for now
 
+end
+
+function [graycube, bbx] = extendCube(bbx, file, setname, height, width, deep)
+%extend the cube given;
+e_z = 4;
+e_x = 10;
+e_y = 10;
+
+%detected locations
+z = bbx(3);
+y = bbx(2);
+x = bbx(1);
+z_count = bbx(6);
+y_count = bbx(5);
+x_count = bbx(4);
+
+x = (x-(e_x/2));
+y = (y-(e_y/2));
+z = (z-(e_z/2));
+
+%if startpoints are negative or zero, set them to detected ones
+%add the patch size to the count
+if x<=0
+    x = bbx(1);
+    x_count = bbx(4) + (e_x/2);
+end
+if y<=0
+    y = bbx(2);
+    y_count = bbx(5) + (e_y/2);
+end
+if z<=0
+    z = bbx(3);
+    z_count = bbx(6) + (e_z/2);
+end
+
+x_count = x_count + (e_x);
+y_count = y_count + (e_y);
+z_count = z_count + (e_z);
+
+if x_count>height || x_count+x>height
+    x_count = bbx(4);
+end
+if y_count>width || y_count+y>width
+    y_count = bbx(5);
+end
+if z_count>deep || z_count+z>deep
+    z_count = bbx(6);
+end
+
+startix = double([z, y, x]);
+counts = double([z_count, y_count, x_count]);
+graycube = h5read(file, setname, startix, counts);
+graycube = permute(permute(graycube, [3, 2, 1]),[2,1,3]); %this is for matlab xyz order227122
+bbx = [x y z x_count y_count z_count];
+%[sift_feas,~] = Create_Descriptor(graycube,1,1,x_count/2,y_count/2, z_count/2);
 end

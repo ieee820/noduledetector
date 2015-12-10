@@ -1,18 +1,17 @@
 % This function will find the values for the given predictionfile and thresholds
-% will iterate each thresholds and annotation points
-function [returnStruct, labels_of_thres] = calculateEv2(setName,predFile, predMatrix, thresHolds, labelthreshold)
-    labelsFile = fopen(['../noduledetectordata/' setName '_labels.txt'],'a');
+% will iterate each thresholds and annotation points 
+function [returnStruct] = calculateEv2(setName,predFile, predMatrix, thresHolds, labelthreshold)
+    labelsFile = fopen(['../noduledetectordata/' setName '_labels.txt'], 'w');
     setInfo = getCoordinatesAndPossibilitiesFromTheFile(predFile,setName);
     distanceTolerance = 5;
     returnStruct = zeros(length(thresHolds),4);
-    obj_label = 0;
-    labels_of_thres = [];
+
     for x = 1 : length(thresHolds)
     
         numberOfFalsePositive = 0;%%
         numberOfTruePositive = 0;%%
-        predMatrixTH = predMatrix(:,:,:,1)>thresHolds(x); %predictiondaki
-        %here we may apple some heuristic things
+        predMatrixTH = predMatrix(:,:,:,4)>thresHolds(x); %4 is the channel
+
         prediction_conn_comp = bwlabeln(predMatrixTH);
         
         if (isempty(setInfo))
@@ -35,10 +34,8 @@ function [returnStruct, labels_of_thres] = calculateEv2(setName,predFile, predMa
              if(minimumDistance <= distanceTolerance)
                 %herewe found the nodule
                 %minimumIx is the label
+                %extract class 1 given threshold
                 if thresHolds(x) == labelthreshold
-                    %0.3 gives us all the nodules so, we note that labels
-                    obj_label = obj_label + 1;
-                    labels_of_thres(obj_label) = minimumIx;
                     fprintf(labelsFile,'%d\n', minimumIx);
                 end
                 numberOfTruePositive = numberOfTruePositive + 1;
@@ -54,7 +51,7 @@ end
 %return values are list of structs containing coordinates & possibilities
 %both
 function [returnValues] = getCoordinatesAndPossibilitiesFromTheFile(anotationFile, requiredSet)
-	%anotationFile = fopen(file,'r');
+	anotationFile = fopen(anotationFile,'r');
     counter = 1;
     while ~feof(anotationFile)
             line = fgetl(anotationFile);
@@ -70,7 +67,7 @@ function [returnValues] = getCoordinatesAndPossibilitiesFromTheFile(anotationFil
             returnValues(counter) = struct(field1,value1,field2,value2);
             counter = counter + 1;
     end
-        fclose(anotationFile); %rewind the filepointer
+        %fclose(anotationFile); %rewind the filepointer
         if(counter==1)
                 returnValues = [];
         end
