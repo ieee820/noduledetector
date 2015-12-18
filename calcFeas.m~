@@ -1,11 +1,12 @@
-function calcFeas(ds)
+function calcFeas(originalFile, predictionFile, outputFileNameAndPath, labelFiles, thold)
 
-    originalFile = ['../noduledetectordata/originaldata/example0' num2str(ds) '.h5'];
-    predictionFile = ['../noduledetectordata/ilastikoutput3/example0' num2str(ds) '_Probabilities.h5'];
-    outputFileNameAndPath = ['example_0' num2str(ds) '.h5'];
-    labelFiles = ['../noduledetectordata/ilastikoutput3/example0' num2str(ds) '_labels.txt'];
+if (nargin==0)
+    originalFile = '../noduledetectordata/originaldata/example02.h5';
+    predictionFile = '../noduledetectordata/ilastikoutput3/example02_Probabilities.h5';
+    outputFileNameAndPath = 'example_02.h5';
+    labelFiles = '../noduledetectordata/ilastikoutput3/example02_labels.txt';
     thold = 0.65;
-
+end
 
 %%ROOM FOR FEATURES
 histbins = linspace(0,255,32);
@@ -55,6 +56,11 @@ avgNod = avgNodule(CC, labels, originalFile, originalSetName, predMatrixTH);
 for o = 1 : numObjects
     realNumObjects = realNumObjects + 1;
     completed = floor(o/numObjects*100);
+    if completed < 18
+        continue;
+    else
+        debug = 0;
+    end
     if (mod(o,50)==0)
         fprintf('\b\b\b');
         fprintf('%3d', completed);
@@ -67,7 +73,7 @@ for o = 1 : numObjects
     end
 
     bbx = floor(CC.bbx(o,:)+0.5);   %bounding box
-    [graycube, ~] = extendCube(bbx, originalFile, originalSetName,...
+    [graycube, ] = extendCube(bbx, originalFile, originalSetName,...
         height, width, deep);
     base = zeros(bbx(5), bbx(4), bbx(6));   %base of bounding box
     pix = CC.PixelIdxList{o};   %the pixel location of the cc object
