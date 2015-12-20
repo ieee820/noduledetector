@@ -6,10 +6,10 @@
 datadir = '../noduledetectordata/';
 annotf = [datadir 'originaldata/annotations.txt'];
 resultsFile = fopen([datadir 'results_all_tholds.txt'], 'w');
-folder = [datadir 'ilastikoutput3/'];
+folder = [datadir 'ilastikoutput3'];
 files = dir([folder '*.h5']);
-%thold = linspace(0.40, 0.60, 5);
-thold = 0.65;
+thold = linspace(0.40, 0.65, 10);
+%thold = 0.65;
 labelthreshold = 0.65; %the threshold that labels shall be extracted
 
 resultperTh = zeros(length(thold), length(files)-1);%example_04 has no nodules

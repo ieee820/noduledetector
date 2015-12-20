@@ -6,43 +6,44 @@ import matplotlib.pyplot as plt
 
 trainingDataSetNames = ['Volume', 'CentroidNorm', 'Centroid', 'Perimeter', 'PseudoRadius', 'Complexity',
                         'BoundingBox2Volume', 'BoundingBoxAspectRatio', 'IntensityMax', 'IntensityMean',
-                        'IntensityMin', 'IntensityStd', 'CloseMassRatio']
+                        'IntensityMin', 'IntensityStd', 'IntensityHist', 'gaussianCoefficients',
+                        'gaussianGOF', 'gaussianGOV']
 
-senaryo1File = '/Users/ilker/Desktop/Thesis/Anode09-Original-Prediction/FeatureFiles/Senaryo1/all_features.h5'
-senaryo1LabelFile = '/Users/ilker/Desktop/Thesis/Anode09-Original-Prediction/FeatureFiles/Senaryo1/all_features_labels.h5'
-senaryo1BatchFile = '/Users/ilker/Desktop/Thesis/Anode09-Original-Prediction/FeatureFiles/example_01_features.h5'
-senaryo1BatchLabelFile = '/Users/ilker/Desktop/Thesis/Anode09-Original-Prediction/FeatureFiles/Labels/example_01_features.h5'
+senaryo1File = '../../noduledetectordata/ilastikoutput3/s1/s1.h5'
+senaryo1LabelFile = '../../noduledetectordata/ilastikoutput3/s1/s1_labels.h5'
+senaryo1BatchFile = '../../noduledetectordata/ilastikoutput3/s1/example_05.h5'
+senaryo1BatchLabelFile = '../../noduledetectordata/ilastikoutput3/s1/labels_example_05.h5'
 senaryo1 = {'all_features': senaryo1File, 'all_features_labels': senaryo1LabelFile, 'batch_features': senaryo1BatchFile, 'batch_features_labels': senaryo1BatchLabelFile}
 senaryo1_train_sets = FeatureSet.readFromFile(senaryo1File, trainingDataSetNames, senaryo1LabelFile, 'labels')
 senaryo1_batch_sets = FeatureSet.readFromFile(senaryo1BatchFile, trainingDataSetNames, senaryo1BatchLabelFile, 'labels')
-senaryo1_sets = {'all_features_set': senaryo1_train_sets, 'batch_features_set': senaryo1_batch_sets, 'fileName': 'example01'}
+senaryo1_sets = {'all_features_set': senaryo1_train_sets, 'batch_features_set': senaryo1_batch_sets, 'fileName': 'example05'}
 
-senaryo2File = '/Users/ilker/Desktop/Thesis/Anode09-Original-Prediction/FeatureFiles/Senaryo2/all_features.h5'
-senaryo2LabelFile = '/Users/ilker/Desktop/Thesis/Anode09-Original-Prediction/FeatureFiles/Senaryo2/all_features_labels.h5'
-senaryo2BatchFile = '/Users/ilker/Desktop/Thesis/Anode09-Original-Prediction/FeatureFiles/example_02_features.h5'
-senaryo2BatchLabelFile = '/Users/ilker/Desktop/Thesis/Anode09-Original-Prediction/FeatureFiles/Labels/example_02_features.h5'
+senaryo2File = '../../noduledetectordata/ilastikoutput3/s2/s2.h5'
+senaryo2LabelFile = '../../noduledetectordata/ilastikoutput3/s2/s2_labels.h5'
+senaryo2BatchFile = '../../noduledetectordata/ilastikoutput3/s2/example_01.h5'
+senaryo2BatchLabelFile = '../../noduledetectordata/ilastikoutput3/s2/labels_example_01.h5'
 senaryo2 = {'all_features': senaryo2File, 'all_features_labels': senaryo2LabelFile, 'batch_features': senaryo2BatchFile, 'batch_features_labels': senaryo2BatchLabelFile}
 senaryo2_train_sets = FeatureSet.readFromFile(senaryo2File, trainingDataSetNames, senaryo2LabelFile, 'labels')
 senaryo2_batch_sets = FeatureSet.readFromFile(senaryo2BatchFile, trainingDataSetNames, senaryo2BatchLabelFile, 'labels')
-senaryo2_sets = {'all_features_set': senaryo2_train_sets, 'batch_features_set': senaryo2_batch_sets, 'fileName': 'example02'}
+senaryo2_sets = {'all_features_set': senaryo2_train_sets, 'batch_features_set': senaryo2_batch_sets, 'fileName': 'example01'}
 
-senaryo3File = '/Users/ilker/Desktop/Thesis/Anode09-Original-Prediction/FeatureFiles/Senaryo3/all_features.h5'
-senaryo3LabelFile = '/Users/ilker/Desktop/Thesis/Anode09-Original-Prediction/FeatureFiles/Senaryo3/all_features_labels.h5'
-senaryo3BatchFile = '/Users/ilker/Desktop/Thesis/Anode09-Original-Prediction/FeatureFiles/example_05_features.h5'
-senaryo3BatchLabelFile = '/Users/ilker/Desktop/Thesis/Anode09-Original-Prediction/FeatureFiles/Labels/example_05_features.h5'
+senaryo3File = '../../noduledetectordata/ilastikoutput3/s3/s3.h5'
+senaryo3LabelFile = '../../noduledetectordata/ilastikoutput3/s3/s3_labels.h5'
+senaryo3BatchFile = '../../noduledetectordata/ilastikoutput3/s3/example_03.h5'
+senaryo3BatchLabelFile = '../../noduledetectordata/ilastikoutput3/s3/labels_example_03.h5'
 senaryo3 = {'all_features': senaryo3File, 'all_features_labels': senaryo3LabelFile, 'batch_features': senaryo3BatchFile, 'batch_features_labels': senaryo3BatchLabelFile}
 senaryo3_train_sets = FeatureSet.readFromFile(senaryo3File, trainingDataSetNames, senaryo3LabelFile, 'labels')
 senaryo3_batch_sets = FeatureSet.readFromFile(senaryo3BatchFile, trainingDataSetNames, senaryo3BatchLabelFile, 'labels')
-senaryo3_sets = {'all_features_set': senaryo3_train_sets, 'batch_features_set': senaryo3_batch_sets, 'fileName': 'example05'}
+senaryo3_sets = {'all_features_set': senaryo3_train_sets, 'batch_features_set': senaryo3_batch_sets, 'fileName': 'example03'}
 
-senaryo4File = '/Users/ilker/Desktop/Thesis/Anode09-Original-Prediction/FeatureFiles/Senaryo4/all_features.h5'
-senaryo4LabelFile = '/Users/ilker/Desktop/Thesis/Anode09-Original-Prediction/FeatureFiles/Senaryo4/all_features_labels.h5'
-senaryo4BatchFile = '/Users/ilker/Desktop/Thesis/Anode09-Original-Prediction/FeatureFiles/example_03_features.h5'
-senaryo4BatchLabelFile = '/Users/ilker/Desktop/Thesis/Anode09-Original-Prediction/FeatureFiles/Labels/example_03_features.h5'
+senaryo4File = '../../noduledetectordata/ilastikoutput3/s4/s4.h5'
+senaryo4LabelFile = '../../noduledetectordata/ilastikoutput3/s4/s4_labels.h5'
+senaryo4BatchFile = '../../noduledetectordata/ilastikoutput3/s4/example_02.h5'
+senaryo4BatchLabelFile = '../../noduledetectordata/ilastikoutput3/s4/labels_example_02.h5'
 senaryo4 = {'all_features': senaryo4File, 'all_features_labels': senaryo4LabelFile, 'batch_features': senaryo4BatchFile, 'batch_features_labels': senaryo4BatchLabelFile}
 senaryo4_train_sets = FeatureSet.readFromFile(senaryo4File, trainingDataSetNames, senaryo4LabelFile, 'labels')
 senaryo4_batch_sets = FeatureSet.readFromFile(senaryo4BatchFile, trainingDataSetNames, senaryo4BatchLabelFile, 'labels')
-senaryo4_sets = {'all_features_set': senaryo4_train_sets, 'batch_features_set': senaryo4_batch_sets, 'fileName': 'example03'}
+senaryo4_sets = {'all_features_set': senaryo4_train_sets, 'batch_features_set': senaryo4_batch_sets, 'fileName': 'example02'}
 
 all_senaryo_files = [senaryo1, senaryo2, senaryo3, senaryo4]
 all_senaryo_sets = [senaryo1_sets, senaryo2_sets, senaryo3_sets, senaryo4_sets]
@@ -51,7 +52,7 @@ alphaStep = 25
 alphaStart = 0.5
 alphaStop = 1.0
 treeCount = 10
-mult = 20.0
+mult = 25.0
 alphaRange = numpy.linspace(alphaStart, alphaStop, alphaStep)
 random_seed = 100
 numpy.random.seed(random_seed)
@@ -61,7 +62,7 @@ FPMAT = numpy.zeros((all_senaryo_sets.__len__(), alphaStep))
 s = 0
 a = 0
 
-f = h5py.File('/Users/ilker/Desktop/Thesis/Anode09-Original-Prediction/GUIResultsCalc/randomforest_results.h5', 'w')
+f = h5py.File('randomforest_results.h5', 'w')
 for senaryo in all_senaryo_sets:
     avg_tp_rate = 0.0
     avg_fp_number = 0
@@ -104,5 +105,7 @@ print merge_fp_tp
 print 'Mult : ', mult
 print 'TreeCount :', treeCount
 print 'Alpha : ', alphaRange[0], '& TP : ', avg_tp_rate[0], '& FP : &', avg_fp_number[0]
+print 'Alpha : ', alphaRange[3], '& TP : ', avg_tp_rate[3], '& FP : &', avg_fp_number[3]
 print 'Alpha : ', alphaRange[6], '& TP : ', avg_tp_rate[6], '& FP : &', avg_fp_number[6]
+print 'Alpha : ', alphaRange[9], '& TP : ', avg_tp_rate[9], '& FP : &', avg_fp_number[9]
 print 'Alpha : ', alphaRange[24], '& TP : ', avg_tp_rate[24],'& FP : &', avg_fp_number[24]
