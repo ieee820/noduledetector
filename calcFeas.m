@@ -14,8 +14,9 @@ numObjects2 = 0;
 realNumObjects = 0;
 feature_names = {'Volume','CentroidNorm','Centroid', 'Perimeter', 'PseudoRadius', 'Complexity',...
     'BoundingBox2Volume', 'BoundingBoxAspectRatio', 'IntensityMax','IntensityMean',...
-    'IntensityMin','IntensityStd', 'CloseMassRatio','IntensityHist', 'gaussianCoefficients', 'gaussianBounds', 'gaussianGOF', 'gaussianGOV'};
-feature_lengths = [1, 3, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, length(histbins), 7, 14, 5, 2];
+    'IntensityMin','IntensityStd', 'CloseMassRatio','IntensityHist', 'gaussianCoefficients',...
+    'gaussianBounds', 'gaussianGOF', 'gaussianGOV', 'CollapseZ'};
+feature_lengths = [1, 3, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, length(histbins), 7, 14, 5, 2, 100];
 %512 for cnn filter features
 fea_label = cell(numObjects2,1);
 feature_num = length(feature_names);
@@ -25,7 +26,7 @@ for f = 1: feature_num
 end
 %%EOF ROOM FOR FEATURES
 
-outfname = ['../noduledetectordata/FeatureFiles/' outputFileNameAndPath];
+outfname = ['../noduledetectordata/ilastikoutput3/extractedfeatures/' outputFileNameAndPath];
 labelFile = fopen(labelFiles);
 labels = textscan(labelFile,'%d','delimiter','\n');
 labels = labels{1};
@@ -104,6 +105,7 @@ for o = 1 : numObjects
     fea_pixstd = std(mskedPixelValues);
     fea_close_mass = calculateCloseMassGravity(vec_centroids(o,:), pseudorad,fea_vol,o,vec_areas, vec_centroids);
     fea_pixhist=  hist(mskedPixelValues, histbins);
+    collapseOnZ = imresize(CollapseZ, [10 10]);
     
     features{1}(realNumObjects) = fea_vol;
     features{2}(realNumObjects,:) = [vec_centroids(o,1)/imSize(2), vec_centroids(o,2)/imSize(1),vec_centroids(o,3)/imSize(3)];
@@ -123,6 +125,7 @@ for o = 1 : numObjects
     features{16}(realNumObjects, :) = gaussianCoeffBounds(:);
     features{17}(realNumObjects, :) = gaussianGOF;
     features{18}(realNumObjects, :) = gaussianGOV;
+    features{19}(realNumObjects, :) = collapseOnZ(:);
     fea_label{realNumObjects} = is_current_object_a_noldule;
 end
 
@@ -130,8 +133,9 @@ writeFeatures2HDF5(outfname, realNumObjects, features, feature_names, feature_le
 %Write labels in a different file
 %while h5 matrixes are 0 indexed, a object which is 1234'th object seems
 %1233'th object in the file.
-h5create(strcat('labels_',outputFileNameAndPath), '/labels', realNumObjects, 'Datatype','int16');
-h5write(strcat('labels_',outputFileNameAndPath), '/labels', int16(cell2mat(fea_label)));
+labelF = ['../noduledetectordata/ilastikoutput3/extractedlabels/labels_' outputFileNameAndPath];
+h5create(labelF, '/labels', realNumObjects, 'Datatype','int16');
+h5write(labelF, '/labels', int16(cell2mat(fea_label)));
 end
 
 %%WRITE THE FEATURES INTO HDF5 FILE

@@ -4,7 +4,7 @@ function [returnStruct] = calculateEv2(setName,predFile, predMatrix, thresHolds,
     labelsFile = fopen(['../noduledetectordata/' setName '_labels.txt'], 'w');
     setInfo = getCoordinatesAndPossibilitiesFromTheFile(predFile,setName);
     distanceTolerance = 5;
-    returnStruct = zeros(length(thresHolds),4);
+    returnStruct = zeros(length(thresHolds), 4);
 
     for x = 1 : length(thresHolds)
     

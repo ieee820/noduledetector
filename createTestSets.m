@@ -1,12 +1,13 @@
 %READ ALL FEATURES AND LABELS
 histbins = linspace(0,255,32);
-featureLength = [1, 3, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, length(histbins), 7, 14, 5, 2];
+featureLength = [1, 3, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, length(histbins), 7, 14, 5, 2, 100];
 feature_names = {'Volume','CentroidNorm','Centroid', 'Perimeter', 'PseudoRadius', 'Complexity',...
     'BoundingBox2Volume', 'BoundingBoxAspectRatio', 'IntensityMax','IntensityMean',...
     'IntensityMin','IntensityStd', 'CloseMassRatio','IntensityHist', 'gaussianCoefficients',...
-    'gaussianBounds', 'gaussianGOF', 'gaussianGOV'};
+    'gaussianBounds', 'gaussianGOF', 'gaussianGOV', 'CollapseZ'};
 
 datasets = ['example_01.h5'; 'example_02.h5'; 'example_03.h5'; 'example_05.h5'];
+sets_num = [1 2 3 5];
 general_path = '../noduledetectordata/ilastikoutput3/';
 fea_path = '../noduledetectordata/ilastikoutput3/extractedfeatures/';
 label_path = '../noduledetectordata/ilastikoutput3/extractedlabels/';
@@ -35,7 +36,7 @@ for k=1:size(scenerios, 1),
     total_labels = [];
     %Train 1 items
     for i=1 : length(feature_names)
-        [m n] = size(features{tr_1,i});
+        [m, n] = size(features{tr_1,i});
         if m<n
             total_feas{i} = [total_feas{i} features{tr_1,i}];
         else
@@ -63,6 +64,9 @@ for k=1:size(scenerios, 1),
         end
     end
     
+    %Empty Scenario Dir
+    delete([general_path 's' num2str(k) '/*.h5']);
+    
     %Set Labels
     total_labels = [labels{tr_1}; labels{tr_2}; labels{tr_3}];
     objectCounter = length(total_labels);
@@ -79,8 +83,13 @@ for k=1:size(scenerios, 1),
         h5write(oFileName, ['/',feature_names{f}], feature_data);
     end
     
+    
     %Write Labels
     oFileName = [general_path 's' num2str(k) '/s' num2str(k) '_labels.h5']; 
     h5create(oFileName, '/labels', objectCounter, 'Datatype','int16');
     h5write(oFileName, '/labels', int16(total_labels));
+    
+    %Write Test Sets
+    copyfile([fea_path datasets(test, :)], [general_path 's' num2str(k)]);
+    copyfile([label_path 'labels_' datasets(test, :)], [general_path 's'  num2str(k)]);
 end;

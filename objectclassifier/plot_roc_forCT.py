@@ -62,7 +62,7 @@ FPMAT = numpy.zeros((all_senaryo_sets.__len__(), alphaStep))
 s = 0
 a = 0
 
-f = h5py.File('randomforest_results.h5', 'w')
+f = h5py.File('../randomforest_results_wg.h5', 'w')
 for senaryo in all_senaryo_sets:
     avg_tp_rate = 0.0
     avg_fp_number = 0
@@ -102,10 +102,10 @@ dset.attrs.create('var_alphastart', alphaStart)
 dset.attrs.create('var_alphastop', alphaStop)
 f.close()
 print merge_fp_tp
-print 'Mult : ', mult
+print 'Mult. : ', mult
 print 'TreeCount :', treeCount
 print 'Alpha : ', alphaRange[0], '& TP : ', avg_tp_rate[0], '& FP : &', avg_fp_number[0]
 print 'Alpha : ', alphaRange[3], '& TP : ', avg_tp_rate[3], '& FP : &', avg_fp_number[3]
 print 'Alpha : ', alphaRange[6], '& TP : ', avg_tp_rate[6], '& FP : &', avg_fp_number[6]
 print 'Alpha : ', alphaRange[9], '& TP : ', avg_tp_rate[9], '& FP : &', avg_fp_number[9]
-print 'Alpha : ', alphaRange[24], '& TP : ', avg_tp_rate[24],'& FP : &', avg_fp_number[24]
+print 'Alpha : ', alphaRange[24], '& TP : ', avg_tp_rate[24], '& FP : &', avg_fp_number[24]
