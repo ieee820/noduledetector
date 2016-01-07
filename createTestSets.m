@@ -1,10 +1,10 @@
 %READ ALL FEATURES AND LABELS
 histbins = linspace(0,255,32);
-featureLength = [1, 3, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, length(histbins), 7, 14, 5, 2, 100];
+featureLength = [1, 3, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, length(histbins), 7, 14, 5, 2, 100, 50];
 feature_names = {'Volume','CentroidNorm','Centroid', 'Perimeter', 'PseudoRadius', 'Complexity',...
     'BoundingBox2Volume', 'BoundingBoxAspectRatio', 'IntensityMax','IntensityMean',...
     'IntensityMin','IntensityStd', 'CloseMassRatio','IntensityHist', 'gaussianCoefficients',...
-    'gaussianBounds', 'gaussianGOF', 'gaussianGOV', 'CollapseZ'};
+    'gaussianBounds', 'gaussianGOF', 'gaussianGOV', 'CollapseZ', 'Gradient'};
 
 datasets = ['example_01.h5'; 'example_02.h5'; 'example_03.h5'; 'example_05.h5'];
 sets_num = [1 2 3 5];

@@ -116,6 +116,7 @@ def calculateAccuracyN(pred, gt, labels=None, verbose=False, bias=None):
         # true positive rate for class c 
         print "class ", c, " has ", sum(gt == lab), " samples"
         acc[2 * c + 1] = int((sum(truepos) / float(sum(gt == lab))) * 100) / 100.0
+        data['tpnumber'] = int((sum(truepos)))
         data['tprate'] = acc[2 * c + 1]
         data['fpnumber'] = sum(falsepos)
         # positive prediction value for class c
