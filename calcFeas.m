@@ -92,7 +92,7 @@ for o = 1 : numObjects
     gaussianGOV = struct2array(val_obj);            % godness of validation
     
     %3D Gradient
-    [grad_hist, ~] = GradientFeatureExtractor(graycube);
+    [grad_hist, hist_mag] = GradientFeatureExtractor(graycube);
     
     fea_gradient = grad_hist;
     fea_vol = sum(newbase(:));
@@ -124,13 +124,14 @@ for o = 1 : numObjects
     features{11}(realNumObjects) = fea_pixmin;
     features{12}(realNumObjects) = fea_pixstd;
     features{13}(realNumObjects,:) = fea_close_mass;
-    features{14}(o,:) = fea_pixhist;
+    features{14}(realNumObjects,:) = fea_pixhist;
     features{15}(realNumObjects, :) = gaussianCoeffs;
     features{16}(realNumObjects, :) = gaussianCoeffBounds(:);
     features{17}(realNumObjects, :) = gaussianGOF;
     features{18}(realNumObjects, :) = gaussianGOV;
     features{19}(realNumObjects, :) = collapseOnZ(:);
     features{20}(realNumObjects, :) = fea_gradient;
+    features{21}(realNumObjects, :) = hist_mag;
     fea_label{realNumObjects} = is_current_object_a_noldule;
 end
 
