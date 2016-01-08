@@ -2,12 +2,13 @@ import h5py
 from FeatureSet import FeatureSet
 from accurancyTools import *
 from sklearn import ensemble
+import itertools
 import matplotlib.pyplot as plt
 
 trainingDataSetNames = ['Volume', 'CentroidNorm', 'Centroid', 'Perimeter', 'PseudoRadius', 'Complexity',
-                        'BoundingBox2Volume', 'BoundingBoxAspectRatio', 'IntensityMax', 'IntensityMean',
-                        'IntensityMin', 'IntensityStd', 'IntensityHist', 'gaussianCoefficients',
-                        'gaussianGOF', 'gaussianGOV']
+    'BoundingBox2Volume', 'BoundingBoxAspectRatio', 'IntensityMax', 'IntensityMean',
+    'IntensityMin', 'IntensityStd', 'CloseMassRatio', 'IntensityHist', 'gaussianCoefficients',
+    'gaussianGOV', 'Gradient', 'GradientOfMag']
 
 senaryo1File = '../../noduledetectordata/ilastikoutput3/s1/s1.h5'
 senaryo1LabelFile = '../../noduledetectordata/ilastikoutput3/s1/s1_labels.h5'
@@ -48,9 +49,9 @@ senaryo4_sets = {'all_features_set': senaryo4_train_sets, 'batch_features_set': 
 all_senaryo_files = [senaryo1, senaryo2, senaryo3, senaryo4]
 all_senaryo_sets = [senaryo1_sets, senaryo2_sets, senaryo3_sets, senaryo4_sets]
 
-alphaStep = 25
-alphaStart = 0.5
-alphaStop = 1.0
+alphaStep = 30
+alphaStart = 0.3
+alphaStop = 0.8
 treeCount = 10
 mult = 15.0
 alphaRange = numpy.linspace(alphaStart, alphaStop, alphaStep)
@@ -107,5 +108,6 @@ f.close()
 print merge_fp_tp
 print 'Mult. : ', mult
 print 'TreeCount :', treeCount
-for x in range(0, 24):
-    print 'Alpha : ', alphaRange[x], '& TP : ', avg_tp_rate[x], '& FP : &', avg_fp_number[x]
+for x in range(0, 29):
+    if avg_fp_number[x] < 20:
+        print 'Alpha : ', alphaRange[x], '& TP : ', avg_tp_rate[x], '& FP : &', avg_fp_number[x]
