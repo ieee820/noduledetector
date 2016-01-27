@@ -1,4 +1,4 @@
-function [hist_x] = hist_mag(mag_x, angle_x, th)
+function [hist_x] = calculate_histmag(mag_x, angle_x, th)
 hist_x = zeros(1, 9);
 for i = 1 : size(mag_x, 1) * size(mag_x, 2),
     if mag_x(i)>th

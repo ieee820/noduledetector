@@ -3,14 +3,14 @@
 % trainset and also saves the labels.
 %
 
-datadir = '../noduledetectordata/';
+datadir = '../noduledetectordata/ANODE/';
 annotf = [datadir 'originaldata/annotations.txt'];
 resultsFile = fopen([datadir 'results_all_tholds.txt'], 'w');
-folder = [datadir 'ilastikoutput3/'];
+folder = [datadir 'ilastikoutput/'];
 files = dir([folder '*.h5']);
-thold = linspace(0.65, 0.90, 10);
+thold = 0.8;
 %thold = 0.65;
-labelthreshold = 0.65; %the threshold that labels shall be extracted
+labelthreshold = 0.8; %the threshold that labels shall be extracted
 
 resultperTh = zeros(length(thold), length(files)-1);%example_04 has no nodules
 

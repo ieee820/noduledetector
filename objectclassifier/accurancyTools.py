@@ -7,7 +7,6 @@ Created on Mon Sep 16 01:29:44 2013
 import numpy
 
 
-### HERE MY FUNCTION FINISHES
 def calculateAccuracy(pred, th, gt, labels=None, verbose=False):
     pred = numpy.squeeze(pred)
     gt = numpy.squeeze(gt)
@@ -38,7 +37,7 @@ def calculateAccuracy(pred, th, gt, labels=None, verbose=False):
 def calculateArgMax(predprob, bias):
     predprob = numpy.squeeze(predprob)
     s1, s2 = numpy.shape(predprob)
-    if (s1 < s2):
+    if s1 < s2:
         predprob = numpy.transpose(predprob)
     print "Prediction matrix shape=", numpy.shape(predprob)
     print "prediction bias", bias
@@ -84,6 +83,25 @@ def calculateBinaryDecisionAccuracyforMultiClass(pred, gt, labels=None, verbose=
 
     return acc
 
+def calculate_accuracy(class_no, pred, gt, labels=None, bias=None):
+    # This function calculates tprate and fp count for given bias value at given class
+    if labels is None:
+        labels = numpy.unique(gt)
+
+    predictionMaximum = calculateArgMax(pred, bias)
+    predictionLabels = numpy.zeros(numpy.shape(predictionMaximum))
+    for i in range(len(predictionMaximum)):
+        predictionLabels[i] = labels[predictionMaximum[i]]
+    gt = numpy.squeeze(gt)
+    data = {'tprate': 0.0, 'fpnumber': 0}
+
+    lab = labels[class_no]
+    truepos = numpy.logical_and(gt == lab, predictionLabels == lab)
+    falsepos = numpy.logical_and(gt != lab, predictionLabels == lab)
+    data['tpnumber'] = int((sum(truepos)))
+    data['tprate'] = int((sum(truepos) / float(sum(gt == lab))) * 100) / 100.0
+    data['fpnumber'] = sum(falsepos)
+    return data
 
 def calculateAccuracyN(pred, gt, labels=None, verbose=False, bias=None):
     # Calculates accuracy for N=2,3,... class classification

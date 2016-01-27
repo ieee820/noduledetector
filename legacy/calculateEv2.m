@@ -1,17 +1,18 @@
 % This function will find the values for the given predictionfile and thresholds
 % will iterate each thresholds and annotation points 
 function [returnStruct] = calculateEv2(setName,predFile, predMatrix, thresHolds, labelthreshold)
-    labelsFile = fopen(['../noduledetectordata/' setName '_labels.txt'], 'w');
+    labelsFile = fopen(['../noduledetectordata/ANODE/labels/' setName '_labels.txt'], 'w');
     setInfo = getCoordinatesAndPossibilitiesFromTheFile(predFile,setName);
-    distanceTolerance = 5;
+    distanceTolerance = 10;
     returnStruct = zeros(length(thresHolds), 4);
 
     for x = 1 : length(thresHolds)
     
         numberOfFalsePositive = 0;%%
         numberOfTruePositive = 0;%%
-        predMatrixTH = predMatrix(:,:,:,4)>thresHolds(x); %4 is the channel
-
+        predMatrixTH = predMatrix(:,:,:,4);%>thresHolds(x); %4 is the channel
+        predMatrixTH = predMatrixTH>labelthreshold;
+        %predMatrixTH = imreconstruct(predMatrixTH>0.65, predMatrixTH>0.45);
         prediction_conn_comp = bwlabeln(predMatrixTH);
         
         if (isempty(setInfo))

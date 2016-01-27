@@ -7,7 +7,7 @@ kernelz = zeros(3,3,3);
 kernelz(2,2,:) = [-1 0 1];
 
 %Demo Sphere
-sesize = 25;
+sesize = 100;
 sw=(sesize-1)/2; 
 ses2=ceil(sesize/2);            % ceil sesize to handle odd diameters
 [y,x,z]=meshgrid(-sw:sw,-sw:sw,-sw:sw); 
@@ -44,7 +44,7 @@ surfaceparam = 0;
 p = patch(isosurface(data, surfaceparam));
 isonormals(data,p)
 p.FaceColor = 'red';
-p.EdgeColor = 'none';
+p.EdgeColor = 'green';
 daspect([1,1,1])
 view(3); axis tight
 camlight 
