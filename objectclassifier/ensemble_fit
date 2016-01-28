@@ -3,19 +3,20 @@ from accurancyTools import *
 from sklearn import ensemble
 from datasets import *
 
-trainingDataSetNames = ['Volume', 'Perimeter', 'PseudoRadius', 'Complexity',
-    'CloseMassRatio', 'IntensityHist',
-    'gaussianCoeffsz', 'gaussianGOFz']
+trainingDataSetNames = ['Volume', 'PseudoRadius', 'Complexity',
+    'BoundingBox2Volume', 'BoundingBoxAspectRatio', 'IntensityMax',
+    'IntensityMin', 'CloseMassRatio', 'IntensityHist',
+    'gaussianCoeffsz', 'Gradient', 'ssim']
 
 senaryo = get_sets(trainingDataSetNames)
 
 alphaStep = 30
-alphaStart = 0.2
+alphaStart = 0.4
 alphaStop = 0.8
 alphaRange = numpy.linspace(alphaStart, alphaStop, alphaStep)
 treeCount = 10
 roc_iterator = 0
-random_seed = 1
+random_seed = 12
 numpy.random.seed(random_seed)
 
 totalpositives = 0

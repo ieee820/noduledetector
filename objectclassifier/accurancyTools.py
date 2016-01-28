@@ -86,7 +86,7 @@ def calculateBinaryDecisionAccuracyforMultiClass(pred, gt, labels=None, verbose=
 def calculate_accuracy(class_no, pred, gt, labels=None, bias=None):
     # This function calculates tprate and fp count for given bias value at given class
     if labels is None:
-        labels = numpy.unique(gt)
+        labels = [0, 1]
 
     predictionMaximum = calculateArgMax(pred, bias)
     predictionLabels = numpy.zeros(numpy.shape(predictionMaximum))
@@ -95,12 +95,28 @@ def calculate_accuracy(class_no, pred, gt, labels=None, bias=None):
     gt = numpy.squeeze(gt)
     data = {'tprate': 0.0, 'fpnumber': 0}
 
-    lab = labels[class_no]
-    truepos = numpy.logical_and(gt == lab, predictionLabels == lab)
-    falsepos = numpy.logical_and(gt != lab, predictionLabels == lab)
-    data['tpnumber'] = int((sum(truepos)))
-    data['tprate'] = int((sum(truepos) / float(sum(gt == lab))) * 100) / 100.0
-    data['fpnumber'] = sum(falsepos)
+    tpos = 0
+    fpos = 0
+    for i in range(len(predictionLabels)):
+        predicted = int(predictionLabels[i])
+        reallabel = gt[i]
+        if predicted==1 and (reallabel==1 or reallabel==2):
+            tpos = tpos + 1
+
+        if predicted==0 and reallabel==1:
+            fpos = fpos + 1
+
+        if predicted==1 and reallabel==0:
+            fpos = fpos + 1
+
+    data['tpnumber'] = tpos
+    data['fpnumber'] = fpos
+    #lab = labels[class_no]
+    #truepos = numpy.logical_and(gt == lab, predictionLabels == lab)
+    #falsepos = numpy.logical_and(gt != lab, predictionLabels == lab)
+    #data['tpnumber'] = int((sum(truepos)))
+    #data['tprate'] = int((sum(truepos) / float(sum(gt == lab))) * 100) / 100.0
+    #data['fpnumber'] = sum(falsepos)
     return data
 
 def calculateAccuracyN(pred, gt, labels=None, verbose=False, bias=None):

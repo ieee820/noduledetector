@@ -15,19 +15,19 @@ while ~feof(annots)
     if ~ischar(line), break, end %break if no read a line
     line_i = textscan(line,'%s %d %d %d %d');
     cor = [line_i{:,[2 3 4]}];
-    %pos = line_i{5};
+    pos = line_i{5};
     if strcmp(cell2mat(line_i{1}), 'example01')==1
         ctrs(1,1) = ctrs(1,1)+1;
-        annot_c{1, ctrs(1,1)} = cor;
+        annot_c{1, ctrs(1,1)} = [cor pos];
     elseif strcmp(cell2mat(line_i{1}), 'example02')==1
         ctrs(2,1) = ctrs(2,1)+1;
-        annot_c{2, ctrs(2,1)} = cor;
+        annot_c{2, ctrs(2,1)} = [cor pos];
     elseif strcmp(cell2mat(line_i{1}), 'example03')==1
         ctrs(3,1) = ctrs(3,1)+1;
-        annot_c{3, ctrs(3,1)} = cor;
+        annot_c{3, ctrs(3,1)} = [cor pos];
     elseif strcmp(cell2mat(line_i{1}), 'example05')==1
         ctrs(4,1) = ctrs(4,1)+1;
-        annot_c{4, ctrs(4,1)} = cor;
+        annot_c{4, ctrs(4,1)} = [cor pos];
     end
 end
 fclose(annots);
@@ -49,7 +49,7 @@ for i=1:length(sets)
                               num2str(i) '_feas.h5']);
     %%
     imSize = size(original_scan);
-    a = reshape([annot_c{i,:}], [3 ctrs(i,1)])'; %annotations for this sets
+    a = reshape([annot_c{i,:}], [4 ctrs(i,1)])'; %annotations for this sets
     
     for obj=1:length(objs)
         completed = floor(obj/length(objs)*100);
@@ -64,10 +64,10 @@ for i=1:length(sets)
         %pz = [px-15;pz;pz+15];
         labelfound = 0;
         for j=1:size(a, 1)
-            y = a(j, 2); x = a(j, 1); z = a(j, 3);
+            y = a(j, 2); x = a(j, 1); z = a(j, 3); pos = a(j, 4);
             if any(find(py==y)) && any(find(px==x)) && any(find(pz==z))
                 % That is a true detection label as 1
-                labels{i, obj} = 1;
+                labels{i, obj} = pos;
                 %CC.centroid
                 labelfound = 1; break;
             end
