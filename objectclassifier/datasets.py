@@ -4,13 +4,13 @@ import numpy
 def get_sets(training_dataset_names):
 
     # Test Set Generation
-    sets = ['2', '1']
+    sets = ['1', '2']
     test = [None] * sets.__len__()
     test_labels = [None] * sets.__len__()
     batch_sets = [None] * sets.__len__()
     for x in range(sets.__len__()):
-        test[x] = '../../noduledetectordata/test_train_sets/test_feas_' + sets[x] + '.h5'
-        test_labels[x] = '../../noduledetectordata/test_train_sets/test_labels_' + sets[x] + '.h5'
+        test[x] = '../../noduledetectordata/test_train_sets/test_' + sets[x] + '_feas.h5'
+        test_labels[x] = '../../noduledetectordata/test_train_sets/test_' + sets[x] + '_labels.h5'
         batch_sets[x] = FeatureSet.readFromFile(test[x], training_dataset_names, test_labels[x], 'labels')
 
     # Train Set

@@ -11,8 +11,8 @@ avgNodule = (avgNodule - min(avgNodule(:))) / ( max(avgNodule(:)) - min(avgNodul
 [xDataVal, yDataVal, zDataVal] = prepareSurfaceData(Xa, Ya, avgNodule);
 
 %Normalize summedcube, min-max normalisation
-summedcube = imresize(summedcube, size(avgNodule));
-summedcube = (summedcube - min(summedcube(:))) / ( max(summedcube(:)) - min(summedcube(:)) );
+%summedcube = imresize(summedcube, size(avgNodule));
+%summedcube = (summedcube - min(summedcube(:))) / ( max(summedcube(:)) - min(summedcube(:)) );
 
 %Prepare surface
 [X, Y] = meshgrid(1:size(summedcube, 1), 1:size(summedcube, 2));
@@ -26,7 +26,7 @@ ft = fittype( 'a + b*exp(-(((x-c1)*cosd(t1)+(y-c2)*sind(t1))/w1)^2-((-(x-c1)*sin
 %ft = fittype(model, 'independent', {'x', 'y'}, 'dependent', 'z');
 opts = fitoptions( 'Method', 'NonlinearLeastSquares' );
 opts.Display = 'Off';
-opts.StartPoint = [0 0.1 2 2 0.1 0.1 0.1]; %Start points are tested, may changed on further tests
+%opts.StartPoint = [0 0.1 2 2 0.1 0.1 0.1]; %Start points are tested, may changed on further tests
 opts.MaxIter = 100;
 %Fit model to data
 %ft = fittype( 'poly55' );

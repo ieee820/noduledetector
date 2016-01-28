@@ -3,7 +3,9 @@ from accurancyTools import *
 from sklearn import ensemble
 from datasets import *
 
-trainingDataSetNames = ['Volume']
+trainingDataSetNames = ['Volume', 'Perimeter', 'PseudoRadius', 'Complexity',
+    'CloseMassRatio', 'IntensityHist',
+    'gaussianCoeffsz', 'gaussianGOFz']
 
 senaryo = get_sets(trainingDataSetNames)
 

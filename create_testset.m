@@ -35,6 +35,7 @@ fclose(annots);
 %% Label objects
 labels = cell(4, 1);
 for i=1:length(sets)
+    disp(['Processing Set : ' num2str(i)]);
     [~,fn,~] = fileparts(cell2mat(sets(i)));
     original_scan = h5read(['../noduledetectordata/ANODE/originaldata/' fn '.h5'], '/set');
     original_scan = permute(original_scan, [2 3 1]);
@@ -43,10 +44,18 @@ for i=1:length(sets)
     ilastik_output = read_ilastik_output(p_file_name, 4, dth);
     
     objs = calculate_cc(ilastik_output, original_scan, dilatesiz, ex_size, dataname);
+    %% Calculate the features
+    calculate_features(objs, ['../noduledetectordata/test_train_sets/test_'...
+                              num2str(i) '_feas.h5']);
+    %%
     imSize = size(original_scan);
     a = reshape([annot_c{i,:}], [3 ctrs(i,1)])'; %annotations for this sets
     
     for obj=1:length(objs)
+        completed = floor(obj/length(objs)*100);
+        if (mod(i,50)==0)
+            fprintf('%3d\n', completed);
+        end
         CC = objs(obj).CC;
         pix = CC.PixelIdxList;   %the pixel location of the cc object
         [py,px,pz] = ind2sub(imSize, pix{1}); %converts the 1d point into 3d point
@@ -70,4 +79,10 @@ for i=1:length(sets)
 end
 
 %% Save Labels
-
+for i=1:size(labels, 1)
+    labelsasmat = [labels{i, :}];
+    file_path = ['../noduledetectordata/test_train_sets/test_' num2str(i) '_labels.h5'];
+    delete(file_path);
+    h5create(file_path, '/labels', length(labelsasmat), 'Datatype','int16');
+    h5write(file_path , '/labels', int16(labelsasmat'));
+end
