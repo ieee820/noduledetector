@@ -10,13 +10,13 @@ trainingDataSetNames = ['Volume', 'PseudoRadius', 'Complexity',
 
 senaryo = get_sets(trainingDataSetNames)
 
-alphaStep = 30
+alphaStep = 25
 alphaStart = 0.4
 alphaStop = 0.8
 alphaRange = numpy.linspace(alphaStart, alphaStop, alphaStep)
-treeCount = 10
+treeCount = 100
 roc_iterator = 0
-random_seed = 12
+random_seed = 1
 numpy.random.seed(random_seed)
 
 totalpositives = 0
@@ -46,11 +46,16 @@ avg_tp_rate = numpy.sum(TPMAT, axis=0)
 avg_tp_rate /= totalpositives
 avg_fp_number = numpy.sum(FPMAT, axis=0)
 avg_fp_number /= test_count
+
+merge_fp_tp = numpy.r_[avg_fp_number[None, :], avg_tp_rate[None, :]]
+merge_fp_tp = merge_fp_tp.transpose()
+dset = f.create_dataset('roc_vals', shape=numpy.shape(merge_fp_tp), dtype='float')
+dset[:] = merge_fp_tp
 f.close()
 
 #print 'Mult. : ', mult
 print 'TreeCount :', treeCount
-for x in range(0, 29):
+for x in range(0, alphaStep-1):
         print 'Alpha : ', format(alphaRange[x], '.3f'), '& TP : ', format(avg_tp_rate[x], '.3f'), \
               '& FP : &', format(avg_fp_number[x], '.3f')
 

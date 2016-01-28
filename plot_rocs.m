@@ -4,6 +4,6 @@ loglog(r(1,:), r(2,:), '-s');
 ylabel('TP Rate')
 xlabel('Avg # Falses per Scan')
 grid on
-legend('GaussianFit')
+legend('Classifier sets = 1, 3, 5')
 %Load Ilastik Results
 
