@@ -6,7 +6,7 @@ from datasets import *
 trainingDataSetNames = ['Volume', 'PseudoRadius', 'Complexity',
     'BoundingBox2Volume', 'BoundingBoxAspectRatio', 'IntensityMax',
     'IntensityMin', 'CloseMassRatio', 'IntensityHist',
-    'gaussianCoeffsz' ,'Gradient', 'GradientOfMag', 'ssimz']
+    'gaussianCoeffsz', 'Gradient', 'GradientOfMag', 'ssimz']
 
 senaryo = get_sets(trainingDataSetNames)
 
@@ -31,18 +31,25 @@ FPMAT = numpy.zeros((test_count, alphaStep))
 train_set = senaryo['train_set']
 a = 0                                                           # Alpha test iterator
 s_ite = 0
-
+hasnopositives = 0
 rf = ensemble.RandomForestClassifier(n_estimators=treeCount, random_state=(roc_iterator + 1) * 10)
 rf.fit(train_set.data, numpy.ravel(train_set.labels))# Set iterator
 for test_set in senaryo['test_sets']:
     #test_set = train_set
-    totalpositives += sum(test_set.labels == 1)
+    posc = sum(test_set.labels == 1)
+    if posc == 0:
+        hasnopositives += 1
+    totalpositives += posc
 
     p = rf.predict_proba(test_set.data)
     for alpha in alphaRange:
         pred_bias = numpy.array([1-alpha, alpha])
         results = calculate_accuracy(1, p, test_set.labels, bias=pred_bias)
-        TPMAT[s_ite, a] = results['tpnumber']
+        if posc==0 or results['tpnumber']==0:
+            TPMAT[s_ite, a] = 0
+        else:
+            TPMAT[s_ite, a] = float(float(results['tpnumber']) / float(posc))
+
         FPMAT[s_ite, a] = results['fpnumber']
         a += 1
     s_ite += 1
@@ -64,7 +71,7 @@ for test_set in senaryo['test_sets']:
     negset[:] = negatives
 
 avg_tp_rate = numpy.sum(TPMAT, axis=0)
-avg_tp_rate /= totalpositives
+avg_tp_rate /= (test_count - hasnopositives)
 avg_fp_number = numpy.sum(FPMAT, axis=0)
 avg_fp_number /= test_count
 

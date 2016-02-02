@@ -23,7 +23,9 @@ dy = dy(2:end-1, 2:end-1, 2:end-1);
 dz = dz(2:end-1, 2:end-1, 2:end-1);
 
 %Calculate Magnitude of the cube
-mag = abs(dx) + abs(dy) + abs(dz);
+%mag = abs(dx) + abs(dy) + abs(dz);
+mag = sqrt(dx.*dx + dy.*dy + dz.*dz);
+
 
 %Calculate angles (Azimuth & Theta)
 angleazimuth = zeros(size(dx));
@@ -48,7 +50,7 @@ for i = 1 : size(dx, 1) * size(dy, 2) * size(dz, 3),
         j = 1; 
         while(angleazimuth(i)> vv(j)), j=j+1; end;
         % k and j are the indices, transform them to 1 index
-        hist_uu_vv(k,j) = hist_uu_vv(k,j)+mag(i); 
+        hist_uu_vv(k,j) = hist_uu_vv(k,j)+ mag(i); 
     end
 end
 % Normalization of the feature vector using L2-Norm
@@ -64,20 +66,23 @@ z_s = sum(mag, 3)/size(mag,3);
 
 dx_x = conv2(x_s, kernelx, 'same');
 dy_x = conv2(x_s, kernely, 'same');
-mag_x = abs(dx_x) + abs(dy_x);
+%mag_x = abs(dx_x) + abs(dy_x);
+mag_x = sqrt(dx_x.*dx_x + dy_x.*dy_x);
 angle_x = atan2d(dx_x, dy_x);
 angle_x = angle_x + 180;
 
 dx_y = conv2(y_s, kernelx, 'same');
 dy_y = conv2(y_s, kernely, 'same');
-mag_y = abs(dx_y) + abs(dy_y);
+%mag_y = abs(dx_y) + abs(dy_y);
+mag_y = sqrt(dx_y.*dx_y + dy_y.*dy_y);
 angle_y = atan2d(dx_y, dy_y);
 angle_y = angle_y + 180;
 
 
 dx_z = conv2(z_s, kernelx, 'same');
 dy_z = conv2(z_s, kernely, 'same');
-mag_z = abs(dx_z) + abs(dy_z);
+%mag_z = abs(dx_z) + abs(dy_z);
+mag_z = sqrt(dx_z.*dx_z + dy_z.*dy_z);
 angle_z = atan2d(dx_z, dy_z);
 angle_z = angle_z + 180;
 

@@ -1,52 +1,4 @@
-function sliceview(inp, titlename,sc)
-%function sliceview(inp, titlename,sc)
-%------------------------------------------------------
-% Displays slices of volumetric image set. It is memory friendly
-% This "v3.0" version works on both cell arrays and ct objects
-% inp, can be an 3D array, a CT object of cell array or matrix 
-% It enables a slider to change the current slice view,
-% titlename, is optional adds the filename as the title
-% sc, is optional CLIM = [CLOW, CHIGH] to scale image values for display
-% default behaviour of the display will scale between min and max of the slice. 
-
-% version: 1.0
-% date: 06.05.08
-% updated 20.05.08  added sc parameter
-% sc is CLIM = [CLOW, CHIGH] to use in imagescale to scale values for
-% desired interval.
-% written: B. Tek
-
-%
-% version: 2.0
-% date : 30.05.08
-% desired interval.
-% written: B. Tek
-
-% version: 3.0
-% date : 09.05.08
-% changing default behaviour of the display. It will scale with scan max
-% and min the all slices. 
-% B.Tek
-
-% Copyright 2008-2013 F. Boray Tek.
-% All rights reserved.
-%
-% This file is part of CT class.
-%
-% CT class is free software; you can redistribute it and/or modify
-% it under the terms of the GNU General Public License as published by
-% the Free Software Foundation; either version 2 of the License, or
-% (at your option) any later version.
-%
-% CT class is distributed in the hope that it will be useful,
-% but WITHOUT ANY WARRANTY; without even the implied warranty of
-% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-% GNU General Public License for more details.
-
-% You should have received a copy of the GNU General Public License
-% along with CT class.  If not, see <http://www.gnu.org/licenses/>.
-
-
+function sliceview(inp, titlename,sc,annots)
 switch nargin
     case 0
         disp('function "sliceview" displayes an image formed of slices..')
@@ -54,9 +6,11 @@ switch nargin
         return
     case 1
         titlename = 'Unknown';
-        sc = 0 ;
+        sc = 0;
+        annots=[];
     case 2
         sc = 0;
+        annots=[];
 end
 
 if (isa(inp, 'CT'))
@@ -70,18 +24,18 @@ elseif (iscell(inp))
     [nrows, ncols] = size(inp{1}); % take size
     % convert to 3-d array. It is not the best.
 else
-    % else do this 
+    % else do this
     [nrows, ncols, nslice] = size(inp); % take size
     
     if ( islogical(inp))
         inp = uint8(inp);
     else
         if (sc==0)
-        sc(1)= min(inp(:));
-        sc(2)= max(inp(:));
+            sc(1)= min(inp(:));
+            sc(2)= max(inp(:));
         end
     end
-
+    
 end
 
 disp(strcat('Displaying set of: ', int2str(nslice),' slices')); %Display what you read
@@ -106,6 +60,8 @@ movegui(fg_hnd,'center');
 % Make the GUI visible.
 set(fg_hnd,'Visible','on');
 
+guidata(fg_hnd,annots);
+
 SliceNumberChange_Callback(sld_hnd,0,inp,ax_hnd,slice_txt_hnd,nslice,sc);
 
 
@@ -113,7 +69,7 @@ SliceNumberChange_Callback(sld_hnd,0,inp,ax_hnd,slice_txt_hnd,nslice,sc);
 
 % Slider callback..
 function SliceNumberChange_Callback(hObject,eventdata,inpt_img,ax_hndle,txt_hndl, n_slice,clim)
-
+annots = guidata(hObject);
 axes(ax_hndle);
 s = get(hObject,'value'); % get slider value
 s = fix(s);
@@ -136,4 +92,43 @@ else
     image(slice,'CDataMapping','scaled', 'Parent',ax_hndle); %
     set(ax_hndle,'CLim',clim);
 end
-%impixelinfo(ax_hndle);
+
+if ~isempty(annots)
+    falses = annots.falses;
+    trues = annots.trues;
+    negatives = annots.negatives;
+    
+    for i = 1:size(falses, 1)
+        sno = falses(i, 3);
+        snomax = falses(i, 6);
+        if s>=sno && s<=sno+snomax
+            %That is a false
+            bbx = [falses(i, 1) falses(i, 2) falses(i, 4)+5 falses(i, 5)+5];
+            plt = annotation('rectangle', 'Position',bbx, 'FaceColor', 'red', 'FaceAlpha', 0.45);
+            set(plt,'parent',ax_hndle);
+        end
+    end
+    
+    for i = 1:size(trues, 1)
+        sno = trues(i, 3);
+        snomax = trues(i, 6);
+        if s>=sno && s<=sno+snomax
+            %That is a false
+            bbx = [trues(i, 1) trues(i, 2) trues(i, 4)+5 trues(i, 5)+5];
+            plt = annotation('rectangle', 'Position',bbx, 'FaceColor', 'green', 'FaceAlpha', 0.45);
+            set(plt,'parent',ax_hndle);
+        end
+    end
+    
+    for i = 1:size(negatives, 1)
+        sno = negatives(i, 3);
+        snomax = negatives(i, 6);
+        if s>=sno && s<=sno+snomax
+            %That is a false
+            bbx = [negatives(i, 1) negatives(i, 2) negatives(i, 4)+5 negatives(i, 5)+5];
+            plt = annotation('rectangle', 'Position',bbx, 'FaceColor', 'blue', 'FaceAlpha', 0.45);
+            set(plt,'parent',ax_hndle);
+        end
+    end
+end
+impixelinfo(ax_hndle);

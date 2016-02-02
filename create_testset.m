@@ -1,4 +1,3 @@
-%% This File is not completed yet
 %% Load Files
 addpath('utility_funcs');
 sets = extractfield(dir('../noduledetectordata/ANODE/originaldata/*.h5'), 'name')';
@@ -9,7 +8,7 @@ dataname = 'ANODE';
 %% Read Annotations
 annot_c = cell(length(sets), 1);
 annots = fopen(annotfile, 'r');
-ctrs = zeros(4, 1);
+ctrs = zeros(5, 1);
 while ~feof(annots)
     line = fgetl(annots);
     if ~ischar(line), break, end %break if no read a line
@@ -25,15 +24,18 @@ while ~feof(annots)
     elseif strcmp(cell2mat(line_i{1}), 'example03')==1
         ctrs(3,1) = ctrs(3,1)+1;
         annot_c{3, ctrs(3,1)} = [cor pos];
-    elseif strcmp(cell2mat(line_i{1}), 'example05')==1
+    elseif strcmp(cell2mat(line_i{1}), 'example04')==1
         ctrs(4,1) = ctrs(4,1)+1;
         annot_c{4, ctrs(4,1)} = [cor pos];
+    elseif strcmp(cell2mat(line_i{1}), 'example05')==1
+        ctrs(5,1) = ctrs(5,1)+1;
+        annot_c{5, ctrs(5,1)} = [cor pos];
     end
 end
 fclose(annots);
 
 %% Label objects
-labels = cell(4, 1);
+labels = cell(5, 1);
 for i=1:length(sets)
     disp(['Processing Set : ' num2str(i)]);
     [~,fn,~] = fileparts(cell2mat(sets(i)));

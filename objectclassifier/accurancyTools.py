@@ -97,20 +97,29 @@ def calculate_accuracy(class_no, pred, gt, labels=None, bias=None):
 
     tpos = 0
     fpos = 0
+    falses = []
+    trues = []
+    negatives = []
     for i in range(len(predictionLabels)):
         predicted = int(predictionLabels[i])
         reallabel = gt[i]
         if predicted==1 and (reallabel==1):
-            tpos = tpos + 1
+            tpos += 1
+            trues.append(i+1)
 
-        # if predicted==0 and reallabel==1:
-        #    fpos = fpos + 1
+        if predicted==0 and reallabel==1:
+            negatives.append(i+1)
 
         if predicted==1 and reallabel==0:
-            fpos = fpos + 1
+            falses.append(i+1) #note down the false
+            fpos += 1
 
     data['tpnumber'] = tpos
     data['fpnumber'] = fpos
+
+    data['falses'] = falses
+    data['trues'] = trues
+    data['negatives'] = negatives
     #lab = labels[class_no]
     #truepos = numpy.logical_and(gt == lab, predictionLabels == lab)
     #falsepos = numpy.logical_and(gt != lab, predictionLabels == lab)

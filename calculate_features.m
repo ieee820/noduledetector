@@ -4,6 +4,7 @@
 % them to a h5 file
 function calculate_features(allobjects, filetosave)
 %% Global vars
+addpath('parfor_progress');
 eval(global_vars);
 [nodz, ~, ~ , ~] = calculate_avg_nodule();
 %% ROOM FOR FEATURES
@@ -12,7 +13,7 @@ feature_names = {'Volume','CentroidNorm','Centroid', 'Perimeter', 'PseudoRadius'
     'BoundingBox2Volume', 'BoundingBoxAspectRatio', 'IntensityMax','IntensityMean', ...
     'IntensityMin','IntensityStd', 'CloseMassRatio','IntensityHist' ...
     'gaussianCoeffsz', 'gaussianGOFz', 'gaussianGOVz', ...
-    'Gradient', 'GradientOfMag', 'ssim'};
+    'Gradient', 'GradientOfMag', 'ssimz'};
 feature_lengths = [1, 3, 3, 1, 1, 1,...
     1, 1, 1, 1,...
     1, 1, 1, length(histbins),...
@@ -29,15 +30,15 @@ allcentroids = [allobjects(:).CC];
 allcentroids = reshape([allcentroids.centroid], [] , length(allobjects))';
 allareas = [allobjects(:).CC];
 allareas = reshape([allareas.area], [] , length(allobjects))';
-
+fprintf(['Calculation Features For File : ' filetosave '\n']);
+fprintf('Starting To Calculate Generic Features\n');
+N = length(allobjects);
+parfor_progress(N);
 for i=1:length(allobjects)
-    completed = floor(i/length(allobjects)*100);
-    if (mod(i,5)==0)
-        fprintf('\b\b\b');
-        fprintf('%3d', completed);
-    end
+    parfor_progress;
     
     cube = allobjects(i).boxex;
+    cube2 = allobjects(i).boxex2; %more extended for gradient calc
     bbx = allobjects(i).CC.bbx;
     centroid = allobjects(i).CC.centroid;
     pixelidlist = allobjects(i).CC.PixelIdxList{1};
@@ -60,21 +61,13 @@ for i=1:length(allobjects)
     CollapseZ = (CollapseZ - -1000) / 2000;% - -1000 ??nk? min = -1000
     CollapseZ(CollapseZ <0) = 0;
     CollapseZ(CollapseZ >1000) = 1000;
-    %CollapseY = squeeze(sum(cube, 1));
-    %CollapseX = squeeze(sum(cube, 2));
     
     %New Feature -> Gradient and 2nd derivative orientations
-    [fea_gradient, fea_gradient_of_mag] = calculate_gradient_features(cube, magth);
-    
-    %New Feature -> Gaussian Fitting on Z
-    [fitresult, gof, val_obj] = fit_gaussian(CollapseZ, nodz);
-    gaussianCoeffsz = coeffvalues(fitresult);        % Coefficient values
-    gaussianGOFz = struct2array(gof);                % godness of fit
-    gaussianGOVz = struct2array(val_obj);            % godness of validation
+    [fea_gradient, fea_gradient_of_mag] = calculate_gradient_features(cube2, magth);
     
     %New Feature -> Structural Similarity
     [ssimz, ~] = ssim(nodz, imresize(CollapseZ, [10 10]));
-    
+
     %Generic Features
     fea_vol = sum(newbase(:));
     fea_pseudo_rad = (3*fea_vol/4/pi)^(1/3);
@@ -104,14 +97,55 @@ for i=1:length(allobjects)
     features{12}(i) = fea_pixstd;
     features{13}(i, :) = fea_close_mass;
     features{14}(i, :) = fea_pixhist;
-    features{15}(i, :) = gaussianCoeffsz;
-    features{16}(i, :) = gaussianGOFz;
-    features{17}(i, :) = gaussianGOVz;
+    %features{15}(i, :) = gaussianCoeffsz;
+    %features{16}(i, :) = gaussianGOFz;
+    %features{17}(i, :) = gaussianGOVz; 
     features{18}(i, :) = fea_gradient;
     features{19}(i, :) = fea_gradient_of_mag';
+    
     features{20}(i) = ssimz;
 end
+parfor_progress(0);
 
+ps = gcp;
+fprintf('Generic Features Calculation Finished.\n');
+fprintf('Starting To Calculate Complex Features (Gaussian Fitting)\n');
+fprintf(['Using ' num2str(ps.NumWorkers) ' Workers...' '\n']);
+drawnow('update');
+parfor_progress(length(allobjects));
+%Temp Rooms for parfor-loop
+f1 = zeros(size(features{15}));
+f2 = zeros(size(features{16}));
+f3 = zeros(size(features{17}));
+parfor j=1:length(allobjects);
+    cube = allobjects(j).boxex;
+  
+    CollapseZ = sum (cube,3);
+    CollapseZ = CollapseZ /  size (cube,3); % x ve y i?in size, 2 ve 1
+    CollapseZ = (CollapseZ - -1000) / 2000;% - -1000 ??nk? min = -1000
+    CollapseZ(CollapseZ <0) = 0;
+    CollapseZ(CollapseZ >1000) = 1000;
+    
+    %New Feature -> Gaussian Fitting on Z
+    [fitresult, gof, val_obj] = fit_gaussian(CollapseZ, nodz);
+    gaussianCoeffsz = coeffvalues(fitresult);        % Coefficient values
+    gaussianGOFz = struct2array(gof);                % godness of fit
+    gaussianGOVz = struct2array(val_obj);            % godness of validation
+    
+    %Assign to temp variables
+    f1(j, :) = gaussianCoeffsz;
+    f2(j, :) = gaussianGOFz;
+    f3(j, :) = gaussianGOVz;
+    
+    parfor_progress;
+end
+parfor_progress(0);
+%Assign to real containersback
+features{15} = f1;
+features{16} = f2;
+features{17} = f3; 
+
+fprintf('Calculation Completed... Writing Features to h5 file.\n');
 %% Write features
 delete(filetosave);
 write_features(filetosave, length(allobjects), features, feature_names, feature_lengths)

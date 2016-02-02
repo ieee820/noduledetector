@@ -4,7 +4,7 @@ import numpy
 def get_sets(training_dataset_names):
 
     # Test Set Generation
-    sets = ['1', '2', '3', '4']
+    sets = ['1', '2', '3', '4', '5']
     test = [None] * sets.__len__()
     test_labels = [None] * sets.__len__()
     batch_sets = [None] * sets.__len__()
