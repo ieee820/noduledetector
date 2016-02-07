@@ -6,7 +6,7 @@ from datasets import *
 trainingDataSetNames = ['Volume', 'PseudoRadius', 'Complexity',
     'BoundingBox2Volume', 'BoundingBoxAspectRatio', 'IntensityMax',
     'IntensityMin', 'CloseMassRatio', 'IntensityHist',
-    'Gradient', 'GradientOfMag']
+    'gaussfit', 'Gradient', 'GradientOfMag']
 
 senaryo = get_sets(trainingDataSetNames)
 
@@ -23,7 +23,7 @@ analysefalseatalpha = 0.5
 analyseatset = 1
 
 totalpositives = 0
-f = h5py.File('../copeat3.h5', 'w')
+f = h5py.File('../predictions.h5', 'w')
 
 test_count = len(senaryo['test_sets'])
 TPMAT = numpy.zeros((test_count, alphaStep))

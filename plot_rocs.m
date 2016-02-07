@@ -20,12 +20,11 @@ semilogx(fp, tp, '-.s');
 semilogx(fp, tp, '-.s');
 
 ylabel('Dogru Tesbit Orani')
-xlabel('Tarama Basina Yanlis Tesbit')
-title('Obje Siniflandiricisi')
+xlabel('Tarama Basina Ortalama Yanlis Tesbit')
 grid on
 xlim([0 10])
 ylim([0 1])
-legend('Deney 1', 'Deney 2', 'Deney 3' , 'Deney 4', 'Deney 5', 'T?m ?znitelikler')
+legend('Deney 1', 'Deney 2', 'Deney 3' , 'Deney 4', 'Deney 5', 'Tum Oznitelikler')
 
 
 %Load Ilastik Results
@@ -45,12 +44,12 @@ sf = [1/8 0.034; 1/4 0.067; 1/2 0.127; 1 0.208; 2 0.276; 4 0.392; 8 0.512]';
 semilogx(sf(1,:), sf(2,:), '-s');
 
 
-[tp, fp] = get_interpolationpoints('copeat.h5', 4);
+[tp, fp] = get_interpolationpoints('predictions.h5', 5);
 semilogx(fp, tp, '-.s');
 
 xlim([0 10])
 ylim([0 1])
 ylabel('Dogru Tesbit Orani')
-xlabel('Tarama Basina Yanlis Tesbit')
+xlabel('Tarama Basina Ortalama Yanlis Tesbit')
 grid on
 legend('Sistem A', 'Sistem B', 'Sistem C', 'Sistem D', 'Sistem E', 'Sistem F', 'Onerilen Sistemimiz');

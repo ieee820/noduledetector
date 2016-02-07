@@ -6,7 +6,7 @@ from datasets import *
 trainingDataSetNames = ['Volume', 'PseudoRadius', 'Complexity',
     'BoundingBox2Volume', 'BoundingBoxAspectRatio', 'IntensityMax',
     'IntensityMin', 'CloseMassRatio', 'IntensityHist',
-    'Gradient', 'GradientOfMag']
+    'gaussfit', 'Gradient', 'GradientOfMag']
 
 senaryo = get_sets(trainingDataSetNames)
 
@@ -21,7 +21,7 @@ numpy.random.seed(random_seed)
 totalpositives = 0
 
 
-testcount = 100
+testcount = 10
 TPMAT = numpy.zeros((testcount, alphaStep))
 FPMAT = numpy.zeros((testcount, alphaStep))
 a = 0
@@ -29,7 +29,7 @@ s_ite = 0
 
 foldtestfiles = senaryo['train_set']
 for i in range(testcount):
-    [train, test] = foldtestfiles.divideSetRandom(0.75, 0.25, i)
+    [train, test] = foldtestfiles.divideSetRandom(0.9, 0.1, i+10)
     totalpositives += sum(test.labels == 1)
     rf = ensemble.RandomForestClassifier(n_estimators=treeCount, random_state=10)
     rf.fit(train.data, numpy.ravel(train.labels))

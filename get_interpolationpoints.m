@@ -6,11 +6,14 @@ B = flipud(B);
 By = B;
 B = B(1:2000, :);
 
-tholds = linspace(max(B(:, 1)), 0.2, 100);
+tholds = unique(B(:, 1));
 
 rates = zeros(1, length(tholds));
 falses = zeros(1, length(tholds));
 totalnodules = length(find(By(:,2)==1));
+if totalnodules ~=40
+    debug = 1;
+end
 for i=1:length(tholds)
     truepositive = 0;
     falsepositive = 0;
