@@ -1,14 +1,15 @@
 %% Analyse Set
-analyse = 5;
+addpath 'utility_funcs';
+analyse = 2;
 origf = '../noduledetectordata/ANODE/originaldata/';
 eval(global_vars)
 
 fname = ['example0' num2str(analyse)];
 ofp = [origf 'example0' num2str(analyse) '.h5'];
 
-falses = h5read('randomforest_results_wg.h5', ['/falses_' num2str(analyse)])';
-trues = h5read('randomforest_results_wg.h5', ['/trues_' num2str(analyse)])';
-negatives = h5read('randomforest_results_wg.h5', ['/negatives_' num2str(analyse)])';
+falses = h5read('randomforest_results_wxg.h5', ['/falses_' num2str(analyse)])';
+trues = h5read('randomforest_results_wxg.h5', ['/trues_' num2str(analyse)])';
+negatives = h5read('randomforest_results_wxg.h5', ['/negatives_' num2str(analyse)])';
 
 original_scan = h5read(ofp, '/set');
 original_scan = permute(original_scan, [2 3 1]);

@@ -6,7 +6,7 @@ from datasets import *
 trainingDataSetNames = ['Volume', 'PseudoRadius', 'Complexity',
     'BoundingBox2Volume', 'BoundingBoxAspectRatio', 'IntensityMax',
     'IntensityMin', 'CloseMassRatio', 'IntensityHist',
-    'gaussianCoeffsz' ,'Gradient', 'GradientOfMag', 'ssimz']
+    'Gradient', 'GradientOfMag', 'gaussianCoeffsz']
 
 senaryo = get_sets(trainingDataSetNames)
 
@@ -14,7 +14,7 @@ alphaStep = 20
 alphaStart = 0.1
 alphaStop = 0.6
 alphaRange = numpy.linspace(alphaStart, alphaStop, alphaStep)
-treeCount = 80
+treeCount = 100
 roc_iterator = 0
 random_seed = 1
 numpy.random.seed(random_seed)
@@ -23,7 +23,7 @@ analysefalseatalpha = 0.5
 analyseatset = 1
 
 totalpositives = 0
-f = h5py.File('../randomforest_results_wg.h5', 'w')
+f = h5py.File('../randomforest_results_wxg.h5', 'w')
 
 test_count = len(senaryo['test_sets'])
 TPMAT = numpy.zeros((test_count, alphaStep))

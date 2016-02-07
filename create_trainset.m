@@ -6,6 +6,25 @@ vessels = read_vessels('SNUH', '12773', dth, ex_size, dilatesiz);
 vessels2 = read_vessels('SNUH', '12777', dth, ex_size, dilatesiz);
 vessels3 = read_vessels('CR', '11029', dth, ex_size, dilatesiz);
 vessels4 = read_vessels('LS', '10136', dth, ex_size, dilatesiz);
+% vessels = struct();
+% %%EXTRA
+%     paths = {'SNUH', 'CR', 'LS', 'CW'};
+%     for i = 1:length(paths)
+%        fprintf(['processing : ' cell2mat(paths(i)) '\n']);
+%        datasetname = ['../noduledetectordata/' cell2mat(paths(i))];
+%        sets = extractfield(dir([datasetname '/originaldata/*.h5']), 'name')'; 
+%        for j = 1: length(sets)
+%         	[~,fn,~] = fileparts(cell2mat(sets(j)));
+%             fprintf(['processing : ' fn '\n']);
+%             if isempty(fieldnames(vessels))
+%                vessels = read_vessels(cell2mat(paths(i)), fn, dth, ex_size, dilatesiz);
+%             else
+%                 vessels = struct([vessels read_vessels(cell2mat(paths(i)), fn, dth, ex_size, dilatesiz);]);
+%             end
+%        end
+%     end
+%%EXTRA
+
 [nodz, nody, nodx, nodules] = calculate_avg_nodule();
 allobjects = struct([nodules vessels2 vessels vessels3 vessels4]);
 labels = zeros(length(allobjects), 1);

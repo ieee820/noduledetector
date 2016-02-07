@@ -10,45 +10,47 @@ import h5py
 
 class FeatureSet(object):
     @staticmethod
-    def readFromFile(featureFile, featureDataSet,labelFile, labelDataSet, ignoreDataZero = False):
+    def readFromFile(featureFile, featureDataSet,labelFile=None, labelDataSet=None, ignoreDataZero = False):
     # label file is one
-        print labelFile
-        h5file = h5py.File(labelFile, 'r')
-        print labelDataSet
-        h5data = h5file[labelDataSet]
-        rowlength = len(h5data)
-        print "Number of samples", rowlength
-        
-        
-        #self.labels = numpy.uint32(numpy.squeeze(h5data[...]))
-        labels = numpy.zeros([rowlength,1], dtype=numpy.uint32)
-        labels[:,0] = numpy.uint32((h5data[...]))
-        h5file.close()
-        print "Unique labels", numpy.unique(labels)
-#        print self.labels        
-#        print "RowLength = rowlength", "Label Shape= ", numpy.shape(self.labels)
-#        print "WARNING ROW LENGTH IS NOT CORRECT! FIX THIS"
-        # more than one feature dataSet is merged into one data    
-        # size is unknown so I will grow the array
-        # data= []
+        if labelFile != None:
+            print labelFile
+            h5file = h5py.File(labelFile, 'r')
+            print labelDataSet
+            h5data = h5file[labelDataSet]
+            rowlength = len(h5data)
+            print "Number of samples", rowlength
+
+            labels = numpy.zeros([rowlength,1], dtype=numpy.uint32)
+            labels[:,0] = numpy.uint32((h5data[...]))
+            h5file.close()
+            print "Unique labels", numpy.unique(labels)
+
+
+        else:
+            # LABEL FILE YOKSA ROW LENGTH VOLUMEDAN AL
+            h5file = h5py.File(featureFile, 'r')
+            h5data = h5file['Volume']
+            print "Reading from label"
+            rowlength = len(h5data)
+            print rowlength
+            h5file.close()
+
         if ignoreDataZero:
             dataStartIndex = 1
             print "WARNING LABEL ZERO IS NOT READ!"
         else:
             dataStartIndex = 0
-            
+
         h5file = h5py.File(featureFile, 'r')
         featureNames = numpy.copy(featureDataSet)
         ix = 0
         for t in featureDataSet:
             print "Feature DataSet", ix, "Name=", t, '\n'
-            #time.sleep(2)
-            # read dataset
+
             fDataSet= h5file[t]
             dsetShape = fDataSet.shape
             dsetDims = len(dsetShape)
-            #compdim = dsetShape[dsetDims-1]
-   #         print('warning ignoring label zero in the feature file')
+
             if(dsetShape[dsetDims-1]== rowlength):
                 newfeaturecolumns =fDataSet[...,dataStartIndex:] 
             else:
@@ -107,8 +109,10 @@ class FeatureSet(object):
         h5file.close()
         sampleIndex = numpy.uint32(range(0, rowlength))
         
-        
-        return FeatureSet(data, labels, sampleIndex, featureIndexes, featureNames)
+        if labelFile != None:
+            return FeatureSet(data, labels, sampleIndex, featureIndexes, featureNames)
+        else:
+            return FeatureSet(data, None, sampleIndex, featureIndexes, featureNames)
                 
     def __init__(self, data, labels, sampleIndex=None, featureNames=None, featureIndexes=None ):
         # create structure

@@ -22,7 +22,10 @@ imsize = size(original_scan);
 %For each Nodule
 for j=1:length(S)
     centro = S(j).Centroid;
-    if centro(1)<(imsize(1)-10) && centro(2)<(imsize(2)-10)
+    if (centro(1)<(imsize(1)-contol) && centro(1)>contol &&...
+       (centro(2)<(imsize(2)-contol) && centro(2)>contol) &&...
+       (centro(3)<(imsize(3)-contol) && centro(3)>contol) &&...
+       (S(j).Area>=areatol))
         bbx = floor(S(j).BoundingBox+0.5);
         objs(n).boxex = extend_cube(bbx, original_scan, ex_size);
         objs(n).boxex2 = extend_cube(bbx, original_scan, ex_size2);

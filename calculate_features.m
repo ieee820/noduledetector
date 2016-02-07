@@ -12,12 +12,12 @@ histbins = linspace(0,255,32);
 feature_names = {'Volume','CentroidNorm','Centroid', 'Perimeter', 'PseudoRadius', 'Complexity', ...
     'BoundingBox2Volume', 'BoundingBoxAspectRatio', 'IntensityMax','IntensityMean', ...
     'IntensityMin','IntensityStd', 'CloseMassRatio','IntensityHist' ...
-    'gaussianCoeffsz', 'gaussianGOFz', 'gaussianGOVz', ...
+    'gaussfit', 'gaussfitval', ...
     'Gradient', 'GradientOfMag', 'ssimz'};
 feature_lengths = [1, 3, 3, 1, 1, 1,...
     1, 1, 1, 1,...
     1, 1, 1, length(histbins),...
-    7, 5, 2,...
+    6, 5,...
     50, 9*3, 1];
 feature_num = length(feature_names);
 features = cell(feature_num,1);
@@ -97,13 +97,11 @@ for i=1:length(allobjects)
     features{12}(i) = fea_pixstd;
     features{13}(i, :) = fea_close_mass;
     features{14}(i, :) = fea_pixhist;
-    %features{15}(i, :) = gaussianCoeffsz;
-    %features{16}(i, :) = gaussianGOFz;
-    %features{17}(i, :) = gaussianGOVz; 
-    features{18}(i, :) = fea_gradient;
-    features{19}(i, :) = fea_gradient_of_mag';
+    %%15, 16 parfor
+    features{17}(i, :) = fea_gradient;
+    features{18}(i, :) = fea_gradient_of_mag';
     
-    features{20}(i) = ssimz;
+    features{19}(i) = ssimz;
 end
 parfor_progress(0);
 
@@ -116,8 +114,7 @@ parfor_progress(length(allobjects));
 %Temp Rooms for parfor-loop
 f1 = zeros(size(features{15}));
 f2 = zeros(size(features{16}));
-f3 = zeros(size(features{17}));
-parfor j=1:length(allobjects);
+parfor j=1:length(allobjects),
     cube = allobjects(j).boxex;
   
     CollapseZ = sum (cube,3);
@@ -127,23 +124,21 @@ parfor j=1:length(allobjects);
     CollapseZ(CollapseZ >1000) = 1000;
     
     %New Feature -> Gaussian Fitting on Z
-    [fitresult, gof, val_obj] = fit_gaussian(CollapseZ, nodz);
+    [fitresult, gof, ~] = fit_gaussian(CollapseZ, nodz)
     gaussianCoeffsz = coeffvalues(fitresult);        % Coefficient values
     gaussianGOFz = struct2array(gof);                % godness of fit
-    gaussianGOVz = struct2array(val_obj);            % godness of validation
+    %gaussianGOVz = struct2array(val_obj);            % godness of validation
     
     %Assign to temp variables
     f1(j, :) = gaussianCoeffsz;
     f2(j, :) = gaussianGOFz;
-    f3(j, :) = gaussianGOVz;
     
     parfor_progress;
-end
+end;
 parfor_progress(0);
 %Assign to real containersback
 features{15} = f1;
 features{16} = f2;
-features{17} = f3; 
 
 fprintf('Calculation Completed... Writing Features to h5 file.\n');
 %% Write features
