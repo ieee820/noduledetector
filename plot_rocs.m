@@ -10,12 +10,6 @@ semilogx(fp, tp, '-.s');
 [tp, fp] = get_interpolationpoints('predictionsd3.h5', 5);
 semilogx(fp, tp, '-.s');
 
-[tp, fp] = get_interpolationpoints('predictionsd4.h5', 5);
-semilogx(fp, tp, '-.s');
-
-[tp, fp] = get_interpolationpoints('predictionsd5.h5', 5);
-semilogx(fp, tp, '-.s');
-
 [tp, fp] = get_interpolationpoints('predictions.h5', 5);
 semilogx(fp, tp, '-.s');
 
@@ -24,7 +18,7 @@ xlabel('Tarama Basina Ortalama Yanlis Tesbit')
 grid on
 xlim([0 10])
 ylim([0 1])
-legend('Deney 1', 'Deney 2', 'Deney 3' , 'Deney 4', 'Deney 5', 'Tum Oznitelikler')
+legend('Deney 1', 'Deney 2', 'Deney 3', 'Tum Oznitelikler')
 
 
 %Load Ilastik Results
