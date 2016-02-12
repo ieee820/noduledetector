@@ -15,11 +15,11 @@ for i = 1 : length(sets)
     p_file_name = [path 'ilastikoutput/' fn '_Probabilities.h5'];
     ilastik_output = read_ilastik_output(p_file_name, 4, dth);
     
-    objs = calculate_cc(ilastik_output, original_scan, dilatesiz, ex_size, dataname);
+    objs = calculate_cc(ilastik_output, original_scan, dilatesiz, ex_size, [dataname '/' fn]);
     labels = cell(1, length(objs));
     
+    %% TODO : Somehow get the labels exactly as luna16 does.
     
-    %% Get labels for file fn
     
     %% Calculate the features
     calculate_features(objs, ['../noduledetectordata/test_train_sets/test_'...
