@@ -30,13 +30,33 @@ allcentroids = [allobjects(:).CC];
 allcentroids = reshape([allcentroids.centroid], [] , length(allobjects))';
 allareas = [allobjects(:).CC];
 allareas = reshape([allareas.area], [] , length(allobjects))';
-fprintf(['Calculation Features For File : ' filetosave '\n']);
-fprintf('Starting To Calculate Generic Features\n');
-N = length(allobjects);
-parfor_progress(N);
-for i=1:length(allobjects)
-    parfor_progress;
-    
+
+ps = gcp;
+fprintf('Starting To Calculate Features (Parallel)\n');
+fprintf(['Using ' num2str(ps.NumWorkers) ' Workers...' '\n']);
+drawnow('update');
+parfor_progress(length(allobjects));
+%Temp Rooms for parfor-loop
+f1 = zeros(size(features{1}));
+f2 = zeros(size(features{2}));
+f3 = zeros(size(features{3}));
+f4 = zeros(size(features{4}));
+f5 = zeros(size(features{5}));
+f6 = zeros(size(features{6}));
+f7 = zeros(size(features{7}));
+f8 = zeros(size(features{8}));
+f9 = zeros(size(features{9}));
+f10 = zeros(size(features{10}));
+f11 = zeros(size(features{11}));
+f12 = zeros(size(features{12}));
+f13 = zeros(size(features{13}));
+f14 = zeros(size(features{14}));
+f15 = zeros(size(features{15}));
+f16 = zeros(size(features{16}));
+f17 = zeros(size(features{17}));
+f18 = zeros(size(features{18}));
+f19 = zeros(size(features{19}));
+parfor i=1:length(allobjects),
     cube = allobjects(i).boxex;
     cube2 = allobjects(i).boxex2; %more extended for gradient calc
     bbx = allobjects(i).CC.bbx;
@@ -83,46 +103,6 @@ for i=1:length(allobjects)
     fea_close_mass = calculate_closemass(centroid, fea_pseudo_rad, fea_vol, i, allareas, allcentroids);
     fea_pixhist =  hist(masked_pixel_vals, histbins);
     
-    features{1}(i) = fea_vol;
-    features{2}(i, :) = [centroid(1)/imsize(2), centroid(2)/imsize(1),centroid(3)/imsize(3)];
-    features{3}(i, :) = [centroid(1), centroid(2),centroid(3)];
-    features{4}(i) = fea_perim;
-    features{5}(i) =  fea_pseudo_rad;
-    features{6}(i) =  fea_perim_area;
-    features{7}(i) = fea_box_to_vol;
-    features{8}(i) = fea_box_aspect_ratio;
-    features{9}(i) = fea_pixmax;
-    features{10}(i) = fea_pixmean;
-    features{11}(i) = fea_pixmin;
-    features{12}(i) = fea_pixstd;
-    features{13}(i, :) = fea_close_mass;
-    features{14}(i, :) = fea_pixhist;
-    %%15, 16 parfor
-    features{17}(i, :) = fea_gradient;
-    features{18}(i, :) = fea_gradient_of_mag';
-    
-    features{19}(i) = ssimz;
-end
-parfor_progress(0);
-
-ps = gcp;
-fprintf('Generic Features Calculation Finished.\n');
-fprintf('Starting To Calculate Complex Features (Gaussian Fitting)\n');
-fprintf(['Using ' num2str(ps.NumWorkers) ' Workers...' '\n']);
-drawnow('update');
-parfor_progress(length(allobjects));
-%Temp Rooms for parfor-loop
-f1 = zeros(size(features{15}));
-f2 = zeros(size(features{16}));
-parfor j=1:length(allobjects),
-    cube = allobjects(j).boxex;
-  
-    CollapseZ = sum (cube,3);
-    CollapseZ = CollapseZ /  size (cube,3); % x ve y i?in size, 2 ve 1
-    CollapseZ = (CollapseZ - -1000) / 2000;% - -1000 ??nk? min = -1000
-    CollapseZ(CollapseZ <0) = 0;
-    CollapseZ(CollapseZ >1000) = 1000;
-    
     %New Feature -> Gaussian Fitting on Z
     [fitresult, gof, ~] = fit_gaussian(CollapseZ, nodz)
     gaussianCoeffsz = coeffvalues(fitresult);        % Coefficient values
@@ -130,15 +110,49 @@ parfor j=1:length(allobjects),
     %gaussianGOVz = struct2array(val_obj);            % godness of validation
     
     %Assign to temp variables
-    f1(j, :) = gaussianCoeffsz;
-    f2(j, :) = gaussianGOFz;
-    
+    f1(i) = fea_vol;
+    f2(i, :) = [centroid(1)/imsize(2), centroid(2)/imsize(1),centroid(3)/imsize(3)];
+    f3(i, :) = [centroid(1), centroid(2),centroid(3)];
+    f4(i) = fea_perim;
+    f5(i) =  fea_pseudo_rad;
+    f6(i) =  fea_perim_area;
+    f7(i) = fea_box_to_vol;
+    f8(i) = fea_box_aspect_ratio;
+    f9(i) = fea_pixmax;
+    f10(i) = fea_pixmean;
+    f11(i) = fea_pixmin;
+    f12(i) = fea_pixstd;
+    f13(i, :) = fea_close_mass;
+    f14(i, :) = fea_pixhist;
+    f15(i, :) = gaussianCoeffsz;
+    f16(i, :) = gaussianGOFz;
+    f17(i, :) = fea_gradient;
+    f18(i, :) = fea_gradient_of_mag';
+    f19(i) = ssimz;
+    %Progress
     parfor_progress;
 end;
 parfor_progress(0);
 %Assign to real containersback
-features{15} = f1;
-features{16} = f2;
+features{1} = f1;
+features{2} = f2;
+features{3} = f3;
+features{4} = f4;
+features{5} = f5;
+features{6} = f6;
+features{7} = f7;
+features{8} = f8;
+features{9} = f9;
+features{10} = f10;
+features{11} = f11;
+features{12} = f12;
+features{13} = f13;
+features{14} = f14;
+features{15} = f15;
+features{16} = f16;
+features{17} = f17;
+features{18} = f18;
+features{19} = f19;
 
 fprintf('Calculation Completed... Writing Features to h5 file.\n');
 %% Write features
