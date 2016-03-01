@@ -5,7 +5,7 @@ eval(global_vars);
 dataname = 'ANODECHALLANGE';
 
 %% Calculate Features
-for i=11:length(sets)
+for i=1:length(sets)
     disp(['Processing Set : ' num2str(i)]);
     [~,fn,~] = fileparts(cell2mat(sets(i)));
     
