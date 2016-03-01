@@ -24,11 +24,11 @@ def get_sets(training_dataset_names):
 
 def get_anode_sets(training_dataset_names):
     #This sets have no labels
-    sets = range(1, 50)
+    sets = range(1, 51)
     test = [None] * sets.__len__()
     batch_sets = [None] * sets.__len__()
     for x in range(sets.__len__()):
-        test[x] = '../../noduledetectordata/test_train_sets/anodechallange/test_' + sets[x] + '_feas.h5'
+        test[x] = '../../noduledetectordata/test_train_sets/anodechallange/test_' + str(sets[x]) + '_feas.h5'
         batch_sets[x] = FeatureSet.readFromFile(test[x], training_dataset_names)
         # Read Centroids
         h5file = h5py.File(test[x], 'r')

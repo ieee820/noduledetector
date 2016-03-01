@@ -2,14 +2,15 @@ import os
 from sklearn import ensemble
 from datasets import *
 
+
 trainingDataSetNames = ['Volume', 'PseudoRadius', 'Complexity',
     'BoundingBox2Volume', 'BoundingBoxAspectRatio', 'IntensityMax',
     'IntensityMin', 'CloseMassRatio', 'IntensityHist',
-    'gaussianCoeffsz', 'Gradient', 'GradientOfMag', 'ssimz']
+    'gaussfit', 'Gradient', 'GradientOfMag']
 
 senaryo = get_anode_sets(trainingDataSetNames)
 
-treeCount = 80
+treeCount = 100
 iteration = 0
 random_s = 10
 random_seed = 5
@@ -31,7 +32,7 @@ for test_set in senaryo['test_sets']:
     # Writing Them to file
     for i in range(0, len(nodules)):
         # Look once more to the centroids index
-        text_file.write('test%02d %d %d %d %f\n' % (iteration+1, centroids[i, 1], centroids[i, 0], centroids[i, 2], nodules[i]))
+        text_file.write('test%02d %d %d %d %f\n' % (iteration+1, centroids[i, 0]-1, centroids[i, 1]-1, centroids[i, 2]-1, nodules[i]))
 
     iteration += 1
 
