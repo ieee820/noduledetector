@@ -11,8 +11,10 @@ m=sqrt(x.^2 + y.^2 + z.^2);
 b=(m <= m(ses2,ses2,sesize));
 se=strel('arbitrary',b);
 %mat = bigcube;
-mat = imclose(bigcube, se);
-%mat = imopen(mat, se);
+%mat = imclose(bigcube, se);
+mat = bwareaopen(bigcube, areatol);
+mat = imclose(mat, se);
+mat = imfill(mat, 'holes');
 
 %% 2- Calculat CC
 CC = bwconncomp(mat);
