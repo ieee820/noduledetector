@@ -11,10 +11,10 @@ m=sqrt(x.^2 + y.^2 + z.^2);
 b=(m <= m(ses2,ses2,sesize));
 se=strel('arbitrary',b);
 %mat = bigcube;
-%mat = imclose(bigcube, se);
-mat = bwareaopen(bigcube, areatol);
-mat = imclose(mat, se);
+
+mat = imclose(bigcube, se);
 mat = imfill(mat, 'holes');
+mat = bwareaopen(mat, areatol);
 
 %% 2- Calculat CC
 CC = bwconncomp(mat);
@@ -27,8 +27,7 @@ for j=1:length(S)
     centro = S(j).Centroid;
     if (centro(1)<(imsize(1)-contol) && centro(1)>contol &&...
             (centro(2)<(imsize(2)-contol) && centro(2)>contol) &&...
-            (centro(3)<(imsize(3)-(contol/3)) && centro(3)>(contol/3)) &&...
-            (S(j).Area>=areatol))
+            (centro(3)<(imsize(3)-(contol/3)) && centro(3)>(contol/3)))
         bbx = floor(S(j).BoundingBox+0.5);
         objs(n).boxex = extend_cube(bbx, original_scan, ex_size);
         objs(n).boxex2 = extend_cube(bbx, original_scan, ex_size2);

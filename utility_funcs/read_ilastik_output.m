@@ -14,7 +14,12 @@ ilastikprob = permute(ilastikprob, [3 4 2 1]); %permute the matrix
 output_p = ilastikprob(:,:,:,channel);%>dth(1);
 %output = imreconstruct(output_p>dth(1), output_p>dth(2));
 
-ThHigh = squeeze(ilastikprob(:,:,:,4))>squeeze(1.5.*max(ilastikprob(:,:,:,1:3),[],4));
-ThLow = squeeze(ilastikprob(:,:,:,4))>squeeze(1.0*max(ilastikprob(:,:,:,1:3),[],4));
+p = ilastikprob(:,:,:,4);
+pmax = squeeze(max(ilastikprob(:,:,:,1:3),[],4));
+
+
+ThHigh = p>=(1.1*pmax);
+ThLow = p>=(0.9*pmax);
 output = imreconstruct(ThLow, ThHigh);
+
 end

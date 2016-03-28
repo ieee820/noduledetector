@@ -1,6 +1,6 @@
 addpath 'utility_funcs';
 eval(global_vars);
-subset = '1';
+subset = '0';
 path = ['/Volumes/INTENSO/Acedemic/Datasets/CTData/luna16/subset' subset '/'];
 dataname = ['LUNA16/SUBSET' subset];
 sets = extractfield(dir([path 'ilastikoutput/*.h5']), 'name');
