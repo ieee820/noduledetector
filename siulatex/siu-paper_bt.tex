@@ -389,20 +389,20 @@ Interactive Learning Based Nodule Detection in CT Lung Volumes}
 \maketitle
 
 \begin{ozet}
-Bu bildiride akciğer BT taramalarında otomatik nodül tespiti yapmak üzere geliştirdiğimiz yeni ve özgün bir yöntem sunulmaktadır. Önerdiğimiz yöntem, akciğer organına ve belirli bir nodül tipine bağlı kalmaksızın genelleştirilmiş bir yaklaşım sunmaktadır. Düşük doz radyasyonlu ve çeşitli tipte (katı ve kırık cam görünümlü, yüzeye ve damara ilişik) 10 mm'den küçük nodüllerden oluşan zorlu bir tarama kümesinde sınamalar yapılmıştır. Tarama başına ortalama 8 yanlış tespit için nodül tespit duyarlılığının \%52 olduğu ve bir çok özelleşmiş yönteme göre daha iyi olduğu gözlenmiştir.
+Bu bildiride akciğer BT taramalarında otomatik nodül tespiti yapmak üzere geliştirdiğimiz yeni ve özgün bir yöntem sunulmaktadır. Önerdiğimiz yöntem, akciğer organına ve belirli bir nodül tipine bağlı kalmaksızın genelleştirilmiş bir yaklaşım sunmaktadır. Böylelikle akciğer bölütlemesine ihtiyaç duymamaktadır. Düşük doz radyasyonlu ve çeşitli tipte (katı ve kırık cam görünümlü, yüzeye ve damara ilişik) 10 mm'den küçük nodüllerden oluşan zorlu bir tarama kümesinde (Anode09) sınamalar yapılmıştır. Tarama başına ortalama 8 yanlış tespit için nodül tespit duyarlılığı \%52'dir. Yarışmada ilk altıya giren algoritmalarla karşılaştırılabilir düzeydedir.
 
 %\boldmath
 \end{ozet}
 \begin{IEEEanahtar}
-etkileşimli bölütleme, akciğer, nodül tespiti, bilgisayarlı tomografi hacim
+etkileşimli bölütleme, akciğer, nodül tespiti, bilgisayarlı tomografi
 \end{IEEEanahtar}
 
 \begin{abstract}
-We present a novel method to automatically detect lung nodules in CT lung scans. Our method is generalized in the sense that it does not assume/depend a particular organ or a particular nodule type. We test our method in a challenging set that is comprised of low dose CT scans which include all types of nodules (solid, ground glass opacity, juxta-fissule, juxta-vascular) of less than 10mm in size. Our method generates in average 8 false positives per scan for a true positive rate (i.e. sensitivity) of 52\%, which is better than most specialized methods which is tested in the same test set.
+We present a novel method to automatically detect lung nodules in CT lung scans. Our method is generalized in the sense that it does not assume/depend a particular organ or a particular nodule type. hence it does not require an organ segmentation. We test our method in a challenging set (Anode09) that is comprised of low dose CT scans which include all types of nodules (solid, ground glass opacity, juxta-fissural, juxta-vascular) of less than 10mm in size. Our method produces \~8 false positives per scan for true positive rate of 52\%, which is comparable to the first 6 results from the contest.
 %\boldmath
 \end{abstract}
 \begin{IEEEkeywords}
-interactive segmentation, nodule detection, lung, computed tomography imagery
+interactive segmentation, nodule detection, lung, computed tomography,
 \end{IEEEkeywords}
 
 % IEEEtran.cls defaults to using nonbold math in the Abstract.
@@ -428,18 +428,13 @@ interactive segmentation, nodule detection, lung, computed tomography imagery
 
 \section{GİRİŞ}
 
-Kanser bütün dünyada ve ülkemizde giderek artan bir sağlık sorunudur. Globocan’ın \cite{ferlay2012} 184 ülkede ortaklaşa yaptığı araştırmalar sonucu ortaya koyduğu verilere göre 2012’de toplam 14.1 milyon kanser teşhisi koyulmuş, 8 milyon insan hayatını kaybetmiştir. İnvasif olmaması nedeniyle özellikle akciğer ve kolon kanser tanısında kullanılan yöntemlerin başında bilgisayarlı tomografi taraması gelmektedir. Modern bilgisayarlı tomografi (BT) cihazları yüksek çözünürlüklerde çalışarak 200-500 arasında kesit tarar. Radyografik okuma, hacimi oluşturan kesit imgeler arasında yukarı aşağı gezinerek hacimsel yapıyı kavramak için lokal değişimleri incelemeyi gerektirir. Bir radyoloğun tüm bir hacim taramasını incelemesi dikkate değer bir zaman almaktadır. Doğal olarak bu iş mühendislerin ilgisini çekmiş ve bilgisayarlı otomatik çözümler veya İngilizce'de CAD (computer assisted diagnosis) diye adlandırılan bilgisayar destekli teşhis (BDT) algoritmaları geliştirmeye itmiştir.
+Kanser bütün dünyada ve ülkemizde giderek artan bir sağlık sorunudur. Globocan’ın \cite{ferlay2012} 184 ülkede ortaklaşa yaptığı araştırmalara göre, 2012’de toplam 14.1 milyon kanser teşhisi koyulmuş, 8 milyon insan hayatını kaybetmiştir. İnvasif olmaması nedeniyle özellikle akciğer ve kolon taramalarında kullanılan yöntemlerin başında bilgisayarlı \textbf{düşük dozlu} tomografi tarama gelmektedir. Modern bilgisayarlı tomografi (BT) cihazları yüksek çözünürlüklerde çalışarak 200-500 arasında kesit tarar. Radyografik okuma, hacimi oluşturan kesit imgeler arasında yukarı aşağı gezinerek hacimsel yapıyı kavramak için lokal değişimleri incelemeyi gerektirir. Bir radyoloğun tüm bir hacim taramasını incelemesi dikkate değer bir zaman almaktadır. Doğal olarak bu iş mühendislerin ilgisini çekmiş ve  bilgisayar destekli teşhis (BDT) algoritmaları geliştirmeye yöneltmiştir.
 
-Kansere neden olabilecek nodüller görünüm (katı, yarı-katı, kırık cam), konumlanma (plevral, damara bitişik, izole gibi) ve büyüklük itibariyle farlılıklar gösterir. Büyük boyutlu (>~10mm) nodüllerin iyi huylu olup olmadıkları başka yöntemlerle araştırılabilir. Küçük boyutlu (<10mm) nodüllerin ise tespit edildiklerinde kayıt edilmeleri ve boyutlarının ölçülmesi gerekir. Yapılan bir çalışmada farklı radyologların özellikle küçük nodülleri tespit etme duyarlılığın ciddi farklılılar gösterdiği gözlenmiştir \cite{rubin2015}. Yine aynı çalışmada yardımcı okuyucu veya ikinci okuyucu olarak BDT kullanıldığı takdirde tespitte farklılıkların dolayısıyla tespit duyarlılıklarında ki değişintinin azaldığı gözlenmiştir. Bilgisayarlı tomografi tarama (BT) görüntülerinde lezyon tespiti, ölçümü ve sınıflandırmasını otomatik yapmayı amaçlayan yöntemler genellikle bir tek organı veya lezyonu hedef almaktadır. Bu tür yöntemler BT taramasında ilgili organı, örneğin akciğeri bölütleyecek bir ön-işlem ile başlar; aday vokselleri şekil, renk, vb niteliklerle tespit eden ikinci bir algoritma çalıştırılabilir; aday bileşenlerden öznitelikler çıkarılır; ve bir son sınıflandırıcı aday bileşenler içerisinde lezyonları tespit eder. Akciğer organı için katı nodülleri tespit eden/sayan algoritma, çok farklı görünümdeki bağırsak organında polip tespiti için kullanılamaz. Bunun yanında genellikle akciğerde katı olmayan nodülleri, örneğin kırık cam görünümlü nodülleri dahi tespit etmekte kullanılamayabilir. Nitekim literatürde yer alan bir çok akciğer nodül tespit algoritması sadece katı veya yarı katı nodülleri tespit edebilir. Ortak veri setleri ile yapılan karşılaştırmalardaki hali hazırdaki algoritmaların yeterince genelleşmiş bir kullanılabilirliği yakalayamadığı; düşük radyasyon dozu ile taranmış hacimlerde ve küçük nodüllerde yeterince başarılı olmadığı gözlenmiştir \cite{anode09}. Bu çalışmada etkileşimli (interaktif) öğrenme ve bölütlemeden yola çıkarak BT hacimlerinde organdan bağımsız lezyon tespiti yapabilecek genelleşmiş (İng. generalized) bir yöntemin ön çalışmasını yaptık ve akciğer organı ve nodüller üzerinde başarılı bir şekilde sınadık. 
-%Geliştirdiğimiz yöntemde 1) akciğer bölütlemesine ihtiyaç duyulmamaktadır; 2) tespit edilecek nodül şekli, konumu, veya tipi için bir ön kabullenme yapılmamıştır. Bu nedenlerle önerdiğimiz yöntem literatürde yer alan diğer nodül tespiti yaklaşımlarından oldukça farklıdır: kullanılabilirliği yüksek bir çerçeve yöntemdir. Yöntemimizde potansiyel lezyon pikselleri/vokselleri etkileşimli öğrenme ile öğrenmekte; tespit edilen adayları sınıflandırmak için özgün ve yine genel (jenerik) öznitelikler kullanmaktayız. Özniteliklerimiz radyologların inceleme metodlarından esinlenmiş ve farklı kesitler arasındaki diferansiyel bilgiyi yakalamaya yöneliktir.
+Kansere neden olabilecek nodüller görünüm (katı, yarı-katı, kırık cam), konumlanma (plevral, damara bitişik, izole gibi) ve büyüklük itibariyle farlılıklar gösterir. Büyük boyutlu (>~10mm) nodüllerin iyi huylu olup olmadıkları başka yöntemlerle araştırılabilir. Küçük boyutlu (<10mm) nodüllerin ise tespit edildiklerinde kayıt edilmeleri ve boyutlarının ölçülmesi gerekir. Radyologların özellikle küçük nodülleri tespit etme duyarlılığında ciddi farklılılar olduğu gözlenmiştir \cite{rubin2015}. Yine aynı çalışmada yardımcı okuyucu veya ikinci okuyucu olarak BDT kullanıldığı takdirde tespitte farklılıkların azaldığı gözlenmiştir. Bütün bunların yanında düşük dozlu tomografi taramalarda (<30mA) lezyonları belirlemek normal-yüksek dozlu taramalara göre daha zordur.
 
+Bilgisayarlı tomografi tarama (BT) görüntülerinde lezyon tespiti, ölçümü ve sınıflandırmasını otomatik yapmayı amaçlayan yöntemler genellikle bir tek organı veya lezyonu hedef almaktadır. Bu tür yöntemler BT taramasında ilgili organı, örneğin akciğeri bölütleyecek bir ön-işlem ile başlar; aday vokselleri şekil, renk, vb niteliklerle tespit eden ikinci bir algoritma çalıştırılabilir; aday bileşenlerden öznitelikler çıkarılır; ve bir son sınıflandırıcı aday bileşenler içerisinde lezyonları tespit eder. Akciğer organı için katı nodülleri tespit eden/sayan algoritma, çok farklı görünümdeki bağırsak organında polip tespiti için kullanılamaz. Bunun yanında bir çok akciğer nodül tespit algoritması sadece katı veya yarı katı nodülleri tespit edebilir. Ortak veri setleri ile yapılan karşılaştırmalardaki hali hazırdaki algoritmaların yeterince genelleşmiş bir kullanılabilirliği yakalayamadığı; düşük radyasyon dozu ile taranmış hacimlerde ve küçük nodüllerde yeterince başarılı olmadığı gözlenmiştir \cite{anode09}. 
 
-\section{VERİ}\label{veriler}
-Bu çalışmada kullandığımız veri, iki farklı kaynaktan derlenmiştir: Lung Image Database Consortium \cite{lidc2011} ve Anode09 \cite{anode09}. LIDC'den derlediğimiz 67 adet tarama (Veri 1) farklı doz aralıklarında (30mA-250mA), kesit kalınlığı 0.5-2.0 mm ve kesit sayısı 250-400 arasında değişmektedir. Toplamda 228 adet katı ve kırık cam görünümlü, yüzeye yapışık ve damara ilişmiş nödüller bulundurmaktadır. Anode09 yarışması veritabanından elde ettiğimiz 5 farklı düşük dozlu taramada (30mA), 1.0 mm kesit kalınlığında ve 300-500 kesit sayısında, toplamda 39 adet genellikle 5-10 mm arasında katı ve kırık cam görünümlü, yüzeye yapışık ve damara yapışık nödül bulundurmaktadır (Veri 2).Veri 1 kümesindeki nodüllerin bütün vokselleri, uzman radyologlar tarafından el ile işaretlenmiştir. Veri 2 kümemizde ise nodüllerin orta noktaları işaretlenmiştir. Anode09 yarışmasının değerlendirilmesi için, organizatörler tarafından derlenen 50 adet etiketsiz veri kümesi (Veri 3), çalışmamızın değerlendirilmesi için kullanılmıştır.
-%Çalışmamızda, eğitim ve test setlerini tamamıyla ayrı tuttuğumuz bir yapı bulunmaktadır. İnteraktif öğrenme sürecinde kullandığımız eğitim seti, Şekil \ref{eq1}'de örneği gösterilen 55 adet ilgi bölgesinden oluşan taramalardır. Art işleme aşamasında örnek geliştirilmesi amacıyla 77 adet ve deney sürecinde 5 adet akciğer taramaları içermektedir. \ref{ground truth}
-%Çalışmada kullanılan veri kümesi, nodül işaretlemeleriyle birlikte tamamı genele açıktır.
-
-\begin{figure}[tb]
+\begin{figure}
 \centering
 \subfigure[]{\includegraphics[scale=0.7]{figs/solid.png}}
 \subfigure[]{\includegraphics[scale=0.7]{figs/ggo.png}}
@@ -447,8 +442,20 @@ Bu çalışmada kullandığımız veri, iki farklı kaynaktan derlenmiştir: Lun
 \label{fig0}
 \end{figure}
 
+Bu çalışmada etkileşimli (interaktif) öğrenme ve bölütlemeden yola çıkarak BT hacimlerinde, organ bölütlemesine gerek duymayan, lezyonları şekil, konum gibi özelliklerle sınırlamayan bir nodül tespit yönteminin ön çalışması yapılmıştır. 
+%Geliştirdiğimiz yöntemde 1) akciğer bölütlemesine ihtiyaç duyulmamaktadır; 2) tespit edilecek nodül şekli, konumu, veya tipi için bir ön kabullenme yapılmamıştır. Bu nedenlerle önerdiğimiz yöntem literatürde yer alan diğer nodül tespiti yaklaşımlarından oldukça farklıdır: kullanılabilirliği yüksek bir çerçeve yöntemdir. Yöntemimizde potansiyel lezyon pikselleri/vokselleri etkileşimli öğrenme ile öğrenmekte; tespit edilen adayları sınıflandırmak için özgün ve yine genel (jenerik) öznitelikler kullanmaktayız. Özniteliklerimiz radyologların inceleme metodlarından esinlenmiş ve farklı kesitler arasındaki diferansiyel bilgiyi yakalamaya yöneliktir.
+
+
+
+\section{VERİ}\label{veriler}
+Bu çalışmada kullandığımız veri, iki farklı kaynaktan derlenmiştir: Lung Image Database Consortium \cite{lidc2011} ve Anode09 \cite{anode09}. LIDC'den derlediğimiz 67 adet tarama (Veri 1) farklı doz aralıklarında (30mA-250mA), kesit kalınlığı 0.5-2.0 mm ve kesit sayısı 250-400 arasında değişmektedir. Toplamda 228 adet katı ve kırık cam görünümlü, yüzeye yapışık ve damara ilişmiş nödüller bulundurmaktadır. Anode09 yarışması veritabanından elde ettiğimiz 5 farklı düşük dozlu taramada (30mA), 1.0 mm kesit kalınlığında ve 300-500 kesit sayısında, toplamda 39 adet genellikle 5-10 mm arasında katı ve kırık cam görünümlü, yüzeye yapışık ve damara yapışık nödül bulundurmaktadır (Veri 2). Veri 1 kümesindeki nodüllerin bütün vokselleri, uzman radyologlar tarafından el ile işaretlenmiştir. Veri 2 kümesinde ise nodüllerin orta noktaları işaretlenmiştir. Anode09 yarışmasının değerlendirilmesi için, organizatörler tarafından derlenen 50 adet etiketsiz tarama (Veri 3), çalışmamızın sınanması için kullanılmıştır.
+%Çalışmamızda, eğitim ve test setlerini tamamıyla ayrı tuttuğumuz bir yapı bulunmaktadır. İnteraktif öğrenme sürecinde kullandığımız eğitim seti, Şekil \ref{eq1}'de örneği gösterilen 55 adet ilgi bölgesinden oluşan taramalardır. Art işleme aşamasında örnek geliştirilmesi amacıyla 77 adet ve deney sürecinde 5 adet akciğer taramaları içermektedir. \ref{ground truth}
+%Çalışmada kullanılan veri kümesi, nodül işaretlemeleriyle birlikte tamamı genele açıktır.
+
+
+
 \section{YÖNTEM}
-Şekil \ref{figflow} görülebileceği gibi yöntem dört ana parçadan oluşmaktadır. 1) Etkileşimli öğrenme ile eğitilmiş piksel/voksel sınıflandırıcının piksel/voksel olasıklıklarını hesaplaması; 2) Piksellerden bağlı bileşenlerin hesaplanarak aday objelerin belirlenmesi; 3) Özniteliklerin hesaplanması; 4) Rastgele karar ormanı kullanılarak objelerin nodül ve nodül-olmayan sınıflara ayrılması.
+Şekil \ref{figflow} görülebileceği gibi yöntemimiz dört ana parçadan oluşmaktadır. 1) Etkileşimli öğrenme ile eğitilmiş piksel/voksel sınıflandırıcının voksel olasıklıklarını hesaplaması; 2) Piksellerden bağlı bileşenlerin hesaplanarak aday objelerin belirlenmesi; 3) Özniteliklerin hesaplanması; 4) Rastgele karar ormanı ile objelerin nodül ve nodül-olmayan sınıflara ayrılması.
 
 \begin{figure*}[tb!]
 \centering
@@ -458,47 +465,47 @@ Bu çalışmada kullandığımız veri, iki farklı kaynaktan derlenmiştir: Lun
 \end{figure*}
 
 \subsection{Etkileşimli Öğrenme}\label{ilastik}
-Otomatik lezyon tespiti algoritmaları genellikle bölütleme aşaması ile başlar. Tomografi görüntülerinin bölütlenmesi, hedef alınan organa bağlı olarak özel yöntemler gerektirir. Bu çalışmada organa yönelik bir ön işleme gereksinimi kaldırmak için potansiyel nodül vokselleri BT taramasında doğrudan tespit edilir. Bunu etkileşimli öğrenme ile kolayca yapılabilmektedir. Etkileşimli bir sistem olan ilastik \cite{sommer2011} çevrimiçi kullanıcı bildirimini kullanarak karmaşık bölütleme problemlerini öğrenebilir. Kullanıcı geri bildirimi ile istenirse öğrenme/eğitim daha sonra da devam ettirilebilir. Bu esnek ve açık yapı biyoimge ve biyoyapılar gibi varyasyon gösteren problemlere çok uygundur; farklı modal sistemlerden alınan biyoimgelere başarı ile uygulanmaktadır \cite{tek2014}. 
-Ilastik'de her voksel için farklı ölçeklerde şu özniteliklerin tümü (veya bir alt kümesi çıkarılabilir: 1) Hounsfield unit değeri, 2) üç boyutlu gradyan, 3) Hessian ve yapısal tensör bazlı doku öznitelikleri. Çoklu ölçek (ing. multi-scale) bir öğrenme sağlayabilmek için bu özniteliklerin hepsi birden fazla ölçekte hesaplanabilir, kullanıcı tarafından ölçekler seçilebilir. Bu çalışmada voksel sınıflandırma için dört adet hedef sınıf belirlenmiştir: doku-kemik, damar, hava boşluğu ve nodül. Şekil \ref{fig1}, ilastik ortamında işaretlenen yapıların bir örneğini göstermektedir. Bir kullanıcı radyologların işaretlemelerini dikkate alarak, 55 adet ilgi bölgesinin, yaklaşık 3-4 adet kesitinde bir kaç vokseli fare yordamıyla işaretleyerek sınıflandırıcıyı eğitti. Sınıflandırıcı, her tarama için, tanımlanan her sınıf için olasılık haritaları oluşturdu. Bu harita, hacimlerde yer alan her bir vokselin her bir sınıf için olasılığını gösterir.
+Otomatik lezyon tespiti algoritmaları genellikle bölütleme aşaması ile başlar. Tomografi görüntülerinin bölütlenmesi, hedef alınan organa bağlı olarak özel yöntemler gerektirir. Bu çalışmada organa yönelik bir ön işleme gereksinimi kaldırmak için potansiyel nodül vokselleri BT taramasında doğrudan tespit edilir. Bu iş etkileşimli öğrenme ile kolayca yapılabilmektedir. Etkileşimli bir sistem olan ilastik \cite{sommer2011} çevrimiçi kullanıcı bildirimini kullanarak karmaşık bölütleme problemlerini öğrenebilir. Kullanıcı geri bildirimi ile istenirse öğrenme/eğitim daha sonra da devam ettirilebilir. Bu esnek ve açık yapı biyoimge ve biyoyapılar gibi varyasyon gösteren problemlere çok uygundur; farklı modal sistemlerden alınan biyoimgelere başarı ile uygulanmıştır \cite{tek2014}. 
+Ilastik'de her voksel için farklı ölçeklerde şu özniteliklerin tümü (veya bir alt kümesi çıkarılabilir: 1) Hounsfield unit değeri, 2) üç boyutlu gradyan, 3) Hessian ve yapısal tensör bazlı doku öznitelikleri. Çoklu ölçek (ing. multi-scale) bir öğrenme sağlayabilmek için bu özniteliklerin hepsi birden fazla ölçekte hesaplanabilir, kullanıcı tarafından ölçekler seçilebilir. Bu çalışmada voksel sınıflandırma için dört adet hedef sınıf belirlendi: doku-kemik, damar, hava boşluğu ve nodül. Şekil \ref{fig1}, ilastik ortamında işaretlenen yapıların bir örneğini göstermektedir. Daha sonra, radyologların işaretlemelerini dikkate alarak, 55 adet ilgi bölgesinin, yaklaşık 3-4 adet kesitinde bir kaç vokseli fare yordamıyla işaretleyerek sınıflandırıcıyı eğitildi. Her tarama için ve tanımlanan her sınıf için olasılık haritaları oluşturuldu.
 
 \begin{figure}[tb]
 \centering
 \subfigure[]{\includegraphics[scale=0.1]{figs/s1.png}}
 \subfigure[]{\includegraphics[scale=0.1]{figs/s2.png}}
 \subfigure[]{\includegraphics[scale=0.1]{figs/s3.png}}
-\caption{a) Etkileşimli öğrenme aracında voksel sınıflandırıcının eğitimi ve kullanıcı tarafından yapılan işaretleme. Sarı: hava boşluğu, kırmızı: damar, yeşil: doku ve kemik; mavi ise nodül sınıflarını göstermektedir. b) Çevrimiçi eğitim sırasında, ilastik'in hesapladığı sınıf olasılıklarının gösterimi. c) ilastik tarafından hesaplanan olasılıklardan çift eşikleme yöntemiyle belirlenen aday objeler.}
+\caption{a) Etkileşimli öğrenme aracında voksel sınıflandırıcının eğitimi ve kullanıcı tarafından yapılan işaretleme. Sarı: hava boşluğu, kırmızı: damar, yeşil: doku ve kemik; mavi ise nodül sınıflarını göstermektedir. b) Çevrimiçi eğitim sırasında, ilastik'in hesapladığı sınıf olasılıklarının gösterimi. c) Voksel sınıf olasılıklarından çift eşikleme yöntemiyle belirlenen aday objeler.}
 \label{fig1}
 \end{figure}
 
 \subsection{Aday Belirleme}
-Bir önceki aşamada, etkileşimli eğitim tamamlandıktan sonra daha önce görülmeyen hacimlere uygulanabilir ve voksel/sınıf olasılıkları hesaplanır. Hesaplanan olasılıklardan aday objelerin bir eşik değerini geçmesi beklenmektedir. Şekil \ref{pcatch}, örnek bir nodül için olasılık haritası görülmektedir, bu değerlerin merkezden uzaklaştıkca azaldığı ve homojen olmadığı görülmektedir. Yüksek olasılıklı voksellere bağlı düşük olasılıklı voksellerin de aday obje maskesinde yer alabilmesi için morfolojik geri-çatma yöntemini kullanarak iki seviyeli bir eşikleme yapmaktayız. Çalışmamızda, yüksek ve düşük eşik olarak sırasıyla $\alpha_1 = 0.6$ ve $\alpha_2 = 0.4$ değerleri kullanılmıştır. Bu işlemin sonucunda ortaya çıkan ikili maske, sırasıyla morfolojik açma işlemi (2x2 basit yapı elemanı) ve bağlı bileşen analizinden geçirilerek aday objeler çıkartılır.
+Bir önceki aşamada, etkileşimli eğitim tamamlanarak sınıflandırıcı oluşturulduktan sonra, eğitimde kullanılmayan sınama taramalarına uygulandı ve tüm hacimler için voksel/sınıf olasılıkları hesaplandı. Hesaplanan olasılıklardan belirli bir eşik değerini geçenleri aday obje olarak belirlendi. Şekil \ref{pcatch} örnek bir nodül için olasılık haritası görülmektedir, bu değerlerin merkezden uzaklaştıkca azaldığı ve homojen olmadığı görülmektedir. Yüksek olasılıklı voksellere bağlı düşük olasılıklı voksellerin de aday obje maskesinde yer alması için morfolojik geri-çatma ile iki seviyeli bir eşikleme uygulandı. Yüksek ve düşük eşikler sırasıyla $\alpha_1 = 0.6$ ve $\alpha_2 = 0.4$ 'dir. Bu işlemin sonucunda ortaya çıkan ikili maskeden, sırasıyla morfolojik açma işlemi (2x2 basit yapı elemanı) ve bağlı bileşen analizi işlemleri ile aday objeler çıkartıldı.
 
 \begin{figure}[t]
 \centering
 \subfigure[]{\includegraphics[height=1.8cm]{figs/probcatch.png}\label{pcatch}}
 \subfigure[]{\includegraphics[height=2.5cm]{figs/sum_nod.png}\label{sumnod}}
 \subfigure[]{\includegraphics[height=2.5cm]{figs/grad_hist.png}\label{gradhist}}
-\caption{a) Olasılık haritasından bir nodül kesiti. Sarı alanlar yüksek, mavi alanlar düşük olasılık değerleridir. b) Bir nodülün z-ekseninde toplanarak oluşturulmuş izdüşümü. c)Gradyan açılarının büyüklük histogramı}
+\caption{a) Olasılık haritasından bir nodül kesiti. Sarı alanlar yüksek, mavi alanlar düşük olasılık değerleridir. b) Bir nodülün z-ekseninde toplanarak oluşturulmuş izdüşümü. c) Gradyan açılarının büyüklük histogramı.}
 \label{fig2}
 \end{figure}
 
 \subsection{Öznitelik Çıkarımı}\label{oznitelik}
-Aday objelerin sınıflandırılması için, her bir bağlı bileşenden toplam 18 adet farklı öznitelik vektörleri hesaplanmıştır. Bu öznitelikler genel ve çalışmamıza özgün olarak iki grupta inceleyebiliriz.
+Her bir aday obje ile ilişkili maske ve orijinal BT tarama kullanılarak toplam 18 adet farklı öznitelik vektörü hesaplandı. Bu öznitelikleri genel ve de çalışmamıza özgün olarak iki grupta inceleyebiliriz.
 
 \subsubsection{Genel Öznitelikler}
-Bu grupta, hacim, varsayımsal çap, hacim sınırlayan kutu ölçek oranı, yüzey alanı hacim oranı gibi şekil öznitelikleri vardır. Bu hesaplamalar, Şekil \ref{fig3}'de gösterildiği gibi aday objenin ait olduğu taramadaki ikili maske üzerinden hesaplanmıştır. Bunların yanında maksimum-minimum HU yoğunlukları, 32 bölümlü HU yoğunluk dağılımı (ing. histogram) bulunmaktadır. Bu öznitelikler ise, aday objenin ait olduğu orijinal BT taramasındaki izdüşümü üzerinden hesaplanır.
+İlk gurupta, hacim, varsayımsal çap, hacim sınırlayan kutu ölçek oranı, yüzey alanı hacim oranı gibi şekil öznitelikleri vardır. Bu hesaplamalar, Şekil \ref{fig3}'de gösterildiği gibi aday objenin ait olduğu taramadaki ikili maske üzerinden hesaplandı. Bunların yanında maksimum-minimum HU yoğunlukları, 32 bölümlü HU yoğunluk dağılımı (ing. histogram) bulunmaktadır. Bu öznitelikler ise, maskenin orijinal BT taramasındaki izdüşümü üzerinden hesaplandı.
 
 \begin{figure}[tb]
 \centering
 \includegraphics[scale=0.2]{figs/ex_nod.png}
 \includegraphics[scale=0.2]{figs/ex_ves.png}
-\caption{Yeniden oluşturulmuş adaylar. Solda nodül ve sağda nodül olmayan yapı.}
+\caption{İkili gösterimde geri çatılmış aday objeler. Solda nodül ve sağda nodül olmayan yapı.}
 \label{fig3}
 \end{figure}
 
 \subsubsection{Voksel gradyanların açı histogramı özniteliği}
-Radyologlar, tomografi taramalarındaki anormaliklerin tespiti için farklı kesitlerdeki değişimleri incelemektedir. Örneğin damarlar farklı kesitlerde konum değişimi gösterirken, anormal yapılar, anatomiden bağımsız lokal değişimler göstermektedir. Bizde, bu gözlemden yola çıkarak kesitler arasındaki farklılıkları özetleyebilmek için gradyan-oryantasyon-histogramı \cite{dalal2005} özniteliğine benzer "görece daha basit" bir öznitelik hesaplamaktayız. Bu özniteliği çıkartmak için sırasıyla 3 uzamsal boyutta türevleri \ref{eqg1};
-Gradyan büyüklüğünü (denklem \ref{eqg2}) ve 3 boyutta küresel açılarını ($\theta, \phi$) (denklem \ref{eqg3}) hesapladık.
+Radyologlar, tomografi taramalarındaki anormaliklerin tespiti için farklı kesitlerdeki değişimleri inceler. Örneğin damarlar farklı kesitlerde konum değişimi gösterirken, anormal yapılar, anatomiden bağımsız lokal değişimler gösterir. Bizde, bu gözlemden yola çıkarak kesitler arasındaki farklılıkları özetleyebilmek için gradyan-oryantasyon-histogramı \cite{dalal2005} özniteliğine benzer "görece daha basit" bir öznitelik oluşturduk. Bu özniteliği çıkartmak için sırasıyla 3 uzamsal boyutta türevleri (\ref{eqg1});
+Gradyan büyüklüğünü (\ref{eqg2}) ve 3 boyutta küresel açılarını ($\theta, \phi$) (\ref{eqg3}) hesaplandı.
 
 \begin{equation}
 \nabla f = <\frac{\partial f}{\partial x} (x,y,z),
@@ -517,7 +524,7 @@ M(x, y, z) = \sqrt{\frac{\partial f}{\partial x}^2 + \frac{\partial f}{\partial 
 \label{eqg3}
 \end{equation}
 
-$\theta$ ve $\phi$ açılarının yönlerine göre dağılım grafiklerini, $M(x, y, z)$ değerleri ağırlığınca hesapladık ve $L_2$ \cite{dalal2005} normalizasyonu uyguladık. Şekil \ref{gradhist}, hesaplanmış örnek bir histogramı görülebilir. Ayrıca gradyan büyüklüğü $M(x, y, z)$, her üç eksende de toplayarak 2 boyuttaki izdüşümlerini hesaplıyoruz \ref{g21}. Bu izdüşümler üzerinde tekrar gradyan hesaplayarak \ref{g22} -ikinci türeve benzeterek- kesitler arası değişimin nasıl değiştiğini hesaplıyoruz. Gradyan açılarını hesaplayarak \ref{g23} 1-boyutlu açı histogramlarını hesaplıyoruz.
+$\theta$ ve $\phi$ açılarının yönlerine göre dağılım grafikleri, $M(x, y, z)$ değerleri ağırlığınca hesaplandı ve $L_2$ \cite{dalal2005} normalizasyonu uygulandı. Şekil \ref{gradhist}, örnek bir histogram görülebilir. Ayrıca gradyan büyüklüğü $M(x, y, z)$, her üç eksende de toplanarak 2 boyuttaki izdüşümlerini hesaplandı (\ref{g21}). Bu izdüşümler üzerinde tekrar gradyan hesaplanarak (\ref{g22}) -ikinci türeve benzeşen- kesitler arası değişim bilgisi gösterime eklendi. Son olarak, gradyan açıları hesaplanarak (\ref{g23}) 1-boyutlu açı histogramları hesaplandı.
  
  \begin{equation}
  p^{M_x} = \sum_x{M}, \quad
@@ -538,7 +545,7 @@ L(x, y) = \sqrt{\frac{\partial p^{M_i}}{\partial x}^2 + \frac{\partial p^{M_i}}{
 \end{equation}
 
 \subsubsection{İki boyutlu Gaussian uydurma}
-Yine aday objenin yerel mi, yoksa anatomik bir uzantı olup olmadığını yakalamak için HU yogunluğunun z-y, x-z, y-z düzlemlerindeki izdüşümlerini kullanabiliriz. Bu amaçla, izdüşümleri hesaplanıp 2 boyutlu bir Gaussian fonksiyona uydurulur. Uydurma katsayıları öznitelik olarak kullanılır. Şekil \ref{sumnod}, örnek bir izdüşümün görülmektedir. Eğer aday obje yerel ise (Örneğin damar değilse) izdüşümü bir Gaussian'a benzeyecektir. Öte yanda, anatomik yapıların izdüşümleri kesitlerin arasında hareketli olduğundan izdüşümleri Gaussian'dan uzaklaşacaktır. 
+Yine aday objenin yerel mi, yoksa anatomik bir uzantı olup olmadığını yakalamak için HU yogunluğunun z-y, x-z, y-z düzlemlerindeki izdüşümlerini kullanmaktayız. Bu amaçla, izdüşümleri hesaplanıp 2 boyutlu bir Gaussian fonksiyona uyduruldu. Uydurma katsayıları öznitelik olarak kullanıldı. Şekil \ref{sumnod}, örnek bir izdüşümün görülmektedir. Eğer aday obje yerel ise (Örneğin damar değilse) izdüşümü bir Gaussian'a benzeyecektir. Öte yanda, anatomik yapıların izdüşümleri kesitlerin arasında hareketli olduğundan izdüşümleri Gaussian'dan uzaklaşacaktır. 
 Kullandığımız model aşağıda görülmektedir: 
 \begin{equation}
 v_1 = \frac{((X-c_1) * \cos(t_1) + (Y-c_2) * \sin(t_1))}{w_1}
@@ -552,33 +559,34 @@ v_2 = -\frac{((X-c_1) * \sin(t_1) + (Y-c_2) * \cos(t_1))}{w_2}
 Z = f(X, Y) = a + b * e({-v_1}^2 - {v_2}^2))
 \label{eq3}
 \end{equation}
-Denklem \ref{eq3}'de belirtilen, $X, Y$ vektörleri 2 boyutlu yüzey alanını temsil eder ve bağımsız değişkenlerdir. $Z$ ise yüzeyin üzerindeki HU yoğunluklarını içeren vektördür. $\lambda = \lbrace a, b, c_1, c_2, t_1, w_1, w_2 \rbrace$ katsayıları, öznitelik olarak kullanılmak üzere her bir aday için hesaplanır.
+Yukarıda (\ref{eq3})'da belirtilen, $X, Y$ vektörleri 2 boyutlu yüzey alanını temsil eder ve bağımsız değişkenlerdir. $Z$ ise yüzeyin üzerindeki HU yoğunluklarını içeren vektördür. $\lambda = \lbrace a, b, c_1, c_2, t_1, w_1, w_2 \rbrace$ katsayıları, öznitelik olarak kullanılmak üzere her bir aday için hesaplandı.
 
 \subsection{Rastgele Karar Ormanı}
-Obje sınıflandırıcısı olarak scikit\footnote{scikit-learn.org/} kütüphanesinden (ing. Random Forest) rastgele karar ormanı sınıflandırıcısını seçtik. Eğitim kümemizi öznitelikler ve etiket çiftleri oluşturmaktadır: $T = \lbrace (\vec{x_1}, y_1), (\vec{x_2}, y_2), .., (\vec{x_n}, y_n) \rbrace$. Buradaki $\vec{x_i}$, yukarıda anlatılan birçok özniteliğin eklenmesinden oluşmaktadır.
+Obje sınıflandırıcısı olarak scikit\footnote{scikit-learn.org/} kütüphanesinden (ing. Random Forest) rastgele karar ormanı sınıflandırıcısını seçildi. Eğitim kümemizi öznitelikler ve etiket çiftleri oluşturmaktadır: $T = \lbrace (\vec{x_1}, y_1), (\vec{x_2}, y_2), .., (\vec{x_n}, y_n) \rbrace$. Öznitelik vektörü $\vec{x_i}$, bütün özniteliklerinin peşpeşe eklenmesinden oluşur.
 
 \section{DENEYLER}
 
 \subsection{Doğruluk Kriteri}
-Veri 1 ve 2 kümelerine ait nodüllerin orta konum noktaları bulunmaktadır. Nodül olarak sınıflandırılan bir aday objenin doğru sayılabilmesi için uzman tarafından işaretlenmiş bir orta konum noktasının, aday objenin hacmiyle örtüşmesi gerekmektedir. Doğru tespit edilen nodüllerin elle işaretlenen toplam nodüllerin sayısına oranı doğru tespit oranını verir. Öte yandan, Nodül olarak sınıflandırılmış ancak uzman işaretleriyle örtüşmeyen objeler yanlış tespit olarak sayılmaktadır. Toplam yanlış tespitlerin, tarama sayısına bölünmesiyle tarama başına ortalama yanlış tespit sayısı bulunmaktadır.
-Sınıflandırıcının ürettiği nodül olma olasılıkları farklı eşik değerlerinde eşiklenerek farklı doğruluk ve yanlış tespit oranları elde edilebilir, FROC analizi yapılabilir. Anode09\cite{anode09}'da olduğu gibi bizde tarama başına ortalama yanlış tespit oranları 1/8, 1/4, 1/2, 1, 2, 4 ve 8 için doğruluk oranlarını hesapladık.
+Veri 1 ve 2 kümelerine ait nodüllerin orta konum noktaları bulunmaktadır. Nodül olarak sınıflandırılan bir aday objenin doğru sayılabilmesi için uzman tarafından işaretlenmiş bir konum orta noktasının, aday objenin hacmiyle örtüşmesi gerekmektedir. Doğru tespit edilen nodüllerin elle işaretlenen toplam nodüllerin sayısına oranı \textbf{doğru tespit} oranını verir. Öte yandan, nodül olarak sınıflandırılmış ancak uzman işaretleriyle örtüşmeyen objeler \textbf{yanlış tespit} olarak sayılmaktadır. Toplam yanlış tespitlerin, tarama sayısına bölünmesiyle tarama başına \textbf{ortalama yanlış tespit sayısı} bulunmaktadır.
+
 %Bu kriter, Anode09\cite{anode}'da kullanılan yarı çapın 1.5 katı kadar yakın olma kriterinden daha yakındır.
 \subsection{Eğitim}
-Bölüm \ref{veriler}'de anlatılan Veri-1 kümesini eğitim, Veri-2 kümesini ise anlık sınamalarımız ve doğrulama işlemlerimiz için ayırdık. Voksel olasılıklarının öğrenilmesi için ilastik \cite{sommer2011} programının eğitilmesi Bölüm \ref{ilastik}'de açıklanmıştır. Aday objelerin sınıflandırılması için ise, Veri 1 kümesindeki toplam 67 taramadan gelen 228 nodül ve bu taramalardan rastgele seçilmiş 3000 adet nodül olmayan objeyi kullanarak, rastgele karar ormanımızı eğittik.
+Bölüm \ref{veriler}'de anlatılan Veri-1 kümesini eğitim, Veri-2 kümesini ise anlık sınamalarımız ve doğrulama işlemlerimiz için ayrıldı. Voksel olasılıklarının öğrenilmesi için ilastik \cite{sommer2011} programının eğitilmesi Bölüm \ref{ilastik}'de açıklanmıştır. Aday objelerin sınıflandırılması için ise, Veri 1 kümesindeki toplam 67 taramadan gelen 228 nodül ve bu taramalardan rastgele seçilmiş 3000 adet nodül olmayan obje ile rasgele karar ormanı eğitilmiştir.
 
 \subsection{Sınama}
-Sınamalar için Anode09 yarışmasında etiketsiz olarak verilen 50 adet deney kümesi (Veri 3) kullanılmıştır. Her biri $512x512xN$ büyüklüğünde olan bu taramalardaki nodül sayısı ve yerleşkeleri açıklanmamıştır. Aday objelerin belirlenmesi sırasında tarama başına yaklaşık 900 aday obje otomatik olarak tespit edilmiştir.
-Anode09 yarışmasında değerlendirilen 6 adet sistem bulunmaktadır, bunlar; Sistem A, B, C, D, E ve F sistemleridir. Şekil \ref{eval} 'da, Tarama başına ortalama yanlış tespit sayısına karşılık gelen doğru tespit oranlarımız görülmektedir. Önerdiğmiz sistem, yarışmadaki değerlendirme kriterlerine uygun olan 6 sistemin sıralamasına girebilmektedir. Önerdiğimiz sistemin FROC grafiği incelendiğinde ortalama 8 yanlış tespite 0.52 doğrulukta doğru tespit yaptığı gözlemlenmiştir. Şekil \ref{evalfeas}, farklı boyutlarda ki nodüllerin, tespit oranlarını içermektedir. Büyük nodüllerin sistemimiz tarafından daha az hassasiyette yakalandıkları gözlemlenmektedir. Ufak nodüllere kıyasla daha yüksek oranda yakalanması beklenen büyük nodüllerin başarısızlık nedeni, interaktif öğrenme aşamasındaki eğitim kümemizin 55 adet nodül işaretlenmesiyle sınırlı olması ve bu eğitim kümesinde büyük nodüllerin sadece 2 tane örneği olmasıdır.
+Sınamalar için Anode09 yarışmasında etiketsiz olarak verilen 50 adet deney kümesi (Veri 3) kullanıldı. Her biri $512x512xN$ büyüklüğünde olan bu taramalardaki nodüllerin konumları bize verilmemiştir. Bu taramaların tümünü aday obje belirleme işleminden geçirdikten sonra tarama başına yaklaşık 900 aday obje otomatik olarak tespit edildi. Her aday obje için öznitelikler çıkarıldı ve sınıflandırıcıya sokuldu. Sınıflandırıcının ürettiği nodül olma olasılıkları farklı eşik değerlerinde eşiklenerek farklı doğruluk ve tarama başına ortalama yanlış tespit oranları elde edildi: FROC analizi yapıldı. Anode09\cite{anode09}'da olduğu gibi bizde tarama başına ortalama yanlış tespit oranları 1/8, 1/4, 1/2, 1, 2, 4 ve 8 için doğruluk oranlarını hesaplandı. Önerdiğimiz sistemin FROC grafiği incelendiğinde ortalama 8 yanlış tespite 0.52 doğrulukta doğru tespit yaptığı gözlemlenmiştir. Şekil \ref{evalfeas} farklı boyutlardaki nodüllerin tespit oranlarını göstermektedir. Büyük nodüllerin sistemimiz tarafından daha az hassasiyette yakalandıkları gözlemlenmektedir. Bunun nedeni interaktif öğrenme aşamasındaki eğitim kümemizde büyük nodüllerden sadece 2 adet örnek olmasıdır.
+
+Anode09 yarışmasında değerlendirilen en iyi altı sistem A, B, C, D, E ve F sistemleridir. Şekil \ref{eval}'da, FROC eğrileri ile sonuçlarımızın diğer sistemlerle karşılaştırılması sunulmuştur. Yöntemimizin, yarışmadaki değerlendirme kriterlerine göre ilk 6 sistemin sıralamasına girebildiği; ve ortalama 8 yanlış pozitife çıkıldığında en duyarlı üçüncü yöntem olduğu gözlenebilir.
 
 \begin{figure}[tb]
 \centering
-\subfigure[]{\includegraphics[height=4.5cm]{figs/eval2.png}\label{eval}}
-\subfigure[]{\includegraphics[height=4.5cm]{figs/nodule_type_detections.png}\label{evalfeas}}
-\caption{a) Anode09 yarışmasındaki sistemlerle, önerdiğimiz sistemin karşılaştırılması. b) Önerilen sistemimizdeki farklı boyutlardaki nodül tespit oranları.}
+\subfigure[]{\includegraphics[height=5cm]{figs/nodule_type_detections.png}\label{evalfeas}}
+\subfigure[]{\includegraphics[height=5cm]{figs/eval2.png}\label{eval}}
+\caption{a) Önerdiğimiz yöntemin Anode09'da farklı tip ve boyutlardaki nodüller için FROC eğrileri. b) bütün nodül tiplerine göre diğer sistemlerle karşılaştırması.}
 \end{figure}
 
 \section{SONUÇLAR}
-Bu çalışmada, akciğer BT taramalarında nodül tespitine yönelik yeni ve özgün bir yöntem sunulmuştur. Yöntemimiz, akciğer organına ve nodül görünümüne özelleşmiş herhangi bir ön kabulde bulunmamaktadır. Bu yönüyle, literatürde yer alan diğer yaklaşımlardan oldukça farklıdır. Anode09 örnek veri kümesinde yaptığımız sınamalarda aldığımız nodül tespit duyarlılığı sonuçlar, yarışmadan sıralamaya girmemeyen birçok algoritmadan daha iyidir.
+Bu çalışmada, akciğer BT taramalarında nodül tespitine yönelik yeni ve özgün bir yöntem sunulmuştur. Yöntemimiz, akciğer organına ve nodül görünümüne özelleşmiş herhangi bir ön kabulde bulunmamaktadır. Bu yönüyle, literatürde yer alan diğer yaklaşımlardan oldukça farklıdır. Bir önbölütlemeye ihtiyaç duymadan akciğer organında farklı tipteki nödülleri tespit edebilmektedir. Anode09 örnek veri kümesinde yaptığımız sınamalarda aldığımız nodül tespit sonuçları, yarışmada ilk altıya giren algoritmalarla karşılaştırılabilir düzeydedir. Ancak algoritmanın büyük nodüllerde yeterli başarıyı gösteremediği gözlenmiştir. Bu eksikliği gidermek için eğitim kümesi zenginleştirelecektir. 
 
 % An example of a floating figure using the graphicx package.
 % Note that \label must occur AFTER (or within) \caption.

@@ -20,6 +20,22 @@ xlim([0 10])
 ylim([0 1])
 legend('Deney 1', 'Deney 2', 'Deney 3', 'Tum Oznitelikler')
 
+%
+figure;
+for i = 1:7
+sk = [1/8 A(i,1); 1/4 A(i,2); 1/2 A(i,3); 1 A(i,4); 2 A(i,5); 4 A(i,6); 8 A(i,7)]';
+semilogx(sk(1,:), sk(2,:), '-s');
+hold on;
+end
+hold off;
+xlim([0 10])
+ylim([0 1])
+ylabel('Dogru Tesbit Orani')
+xlabel('Tarama Basina Ortalama Yanlis Tesbit')
+grid on
+legend('Tum Noduller', 'Izole Noduller', 'Buyuk Noduller', 'Peri-fissural Noduller', 'Plevral Noduller', 'Ufak Noduller', 'Vaskuler Noduller');
+%
+
 
 %Load Ilastik Results
 figure;
@@ -37,9 +53,11 @@ semilogx(se(1,:), se(2,:), '-s');
 sf = [1/8 0.034; 1/4 0.067; 1/2 0.127; 1 0.208; 2 0.276; 4 0.392; 8 0.512]';
 semilogx(sf(1,:), sf(2,:), '-s');
 
+sb = [1/8 0.018; 1/4 0.055; 1/2 0.119; 1 0.205; 2 0.268; 4 0.392; 8 0.520]';
+semilogx(sb(1,:), sb(2,:), '-.r*');
 
-[tp, fp] = get_interpolationpoints('predictions.h5', 5);
-semilogx(fp, tp, '-.s');
+%[tp, fp] = get_interpolationpoints('predictions.h5', 5);
+%semilogx(fp, tp, '-.s');
 
 xlim([0 10])
 ylim([0 1])
